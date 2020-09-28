@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Dude! Where\'s My Car</string>
+    <string name="title">Dude! Where\'s My Car</string>
+    <string name="info">You can either setup your parking or configure your reminder below</string>
 </resources>
