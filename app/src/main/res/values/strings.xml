@@ -2,4 +2,5 @@
     <string name="app_name">Dude! Where\'s My Car</string>
     <string name="title">Dude! Where\'s My Car</string>
     <string name="info">You can either setup your parking or configure your reminder below</string>
+    <string name="homescreen_desc_no_parking">You can either setup your parking or configure your reminder below.e</string>
 </resources>
