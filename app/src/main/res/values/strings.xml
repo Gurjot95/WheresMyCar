@@ -5,6 +5,20 @@
     <string name="homescreen_desc_no_parking">You can either setup your parking or configure your reminder below</string>
     <string name="parking_title">Setup Parking</string>
     <string name="parking_info">You can setup your parking here by verifying the location of your parked car</string>
+    <string name="location_info">Do you want to use this location to park your car?</string>
+    <string name="yes">Yes!</string>
+    <string name="no">No!</string>
     <string name="reminder_title">Setup Reminder</string>
     <string name="reminder_info">You can setup your reminder and notification here</string>
+    <string name="alert_info">Please select the time you want to be reminded before parking ends?</string>
+    <string name="ten_minutes">10 mins</string>
+    <string name="fifteen_minutes">15 mins</string>
+    <string name="twenty_five_minutes">25 mins</string>
+    <string name="thirty_minutes">30 mins</string>
+    <string name="forty_five_minutes">45 mins</string>
+    <string name="sixty_minutes">60 mins</string>
+    <string name="enable">Reminders are currently enabled</string>
+    <string name="disable">Reminders are currently disabled</string>
+    <string name="disable_reminder">Disable Reminder</string>
+    <string name="enable_snooze">Enable Snooze</string>
 </resources>

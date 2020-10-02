@@ -7,4 +7,7 @@
     <color name="cyan">#51AFDD</color>
     <color name="orange">#DD7151</color>
     <color name="grey">#4F5558</color>
+    <color name="yes">#52DF86</color>
+    <color name="no">#EC5239</color>
+    <color name="snooze">#39B2EC</color>
 </resources>
