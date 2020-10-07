@@ -1,16 +1,26 @@
 package project.dudewheresmycar.views
 
-import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProviders
 import project.dudewheresmycar.R
+import project.dudewheresmycar.databinding.ActivityMainBinding
+import project.dudewheresmycar.viewmodel.MainActivityViewModel
 
 class MainActivity : AppCompatActivity() {
-    @SuppressLint("WrongViewCast")
+    lateinit var viewModel: MainActivityViewModel
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
+        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.setupParkingBtn.setOnClickListener {
+            startActivity(Intent(baseContext, ParkingActivity::class.java))
+        }
     }
+
 }
