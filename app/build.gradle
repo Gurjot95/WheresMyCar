@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
@@ -27,9 +28,13 @@ allprojects {
 
 android {
     compileSdkVersion 29
-    dataBinding {
-        enabled = true
+
+    // NOTE: 'android.dataBinding.enabled' is obsolete and has been replaced with 'android.buildFeatures.dataBinding'
+    buildFeatures {
+        dataBinding = true
+        //viewBinding = true
     }
+
     defaultConfig {
         applicationId "project.dudewheresmycar"
         minSdkVersion 21
@@ -63,4 +68,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    // dataBinding
+    kapt 'androidx.databinding:databinding-compiler-common:4.0.1'
 }

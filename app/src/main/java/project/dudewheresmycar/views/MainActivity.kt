@@ -1,31 +1,26 @@
 package project.dudewheresmycar.views
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProviders
 import project.dudewheresmycar.R
+import project.dudewheresmycar.databinding.ActivityMainBinding
+import project.dudewheresmycar.viewmodel.MainActivityViewModel
 
 class MainActivity : AppCompatActivity() {
-    @SuppressLint("WrongViewCast")
+    lateinit var viewModel: MainActivityViewModel
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        // Call ParkingActivity
-        findViewById<Button>(R.id.setupParkingBtn).setOnClickListener(){
-            val intent = Intent(this, ParkingActivity::class.java).apply{
-            }
-            startActivityForResult(intent, 0)
-        }
-
-        // Call ReminderActivity
-        findViewById<Button>(R.id.setupReminderBtn).setOnClickListener(){
-            val intent = Intent(this, ReminderActivity::class.java).apply{
-            }
-            startActivityForResult(intent, 0)
+        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.setupParkingBtn.setOnClickListener {
+            startActivity(Intent(baseContext, ParkingActivity::class.java))
         }
     }
+
 }
