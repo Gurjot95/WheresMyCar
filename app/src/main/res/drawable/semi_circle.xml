@@ -3,7 +3,7 @@
     <item>
         <shape android:shape="rectangle"/>
     </item>
-    <item
+    <item android:id="@+id/semiCircleColor"
         android:bottom="0dp"
         android:left="-100dp"
         android:right="-100dp"

@@ -3,6 +3,7 @@ package project.dudewheresmycar.views
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import project.dudewheresmycar.R
@@ -20,6 +21,15 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.setupParkingBtn.setOnClickListener {
             startActivity(Intent(baseContext, ParkingActivity::class.java))
+        }
+
+        binding.setupReminderBtn.setOnClickListener {
+            startActivity(
+                Intent(
+                    baseContext,
+                    ReminderActivity::class.java
+                )
+            )
         }
     }
 
