@@ -21,4 +21,6 @@
     <string name="disable">Reminders are currently disabled</string>
     <string name="disable_reminder">Disable Reminder</string>
     <string name="enable_snooze">Enable Snooze</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="google_maps_key">AIzaSyARDhe8x_msNX8LaDrG7EUf8KKLb29zeik</string>
 </resources>
