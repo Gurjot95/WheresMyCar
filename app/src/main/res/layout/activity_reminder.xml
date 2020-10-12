@@ -207,7 +207,7 @@
             app:layout_constraintTop_toBottomOf="@id/thirtyMinutes" />
 
         <Button
-            android:id="@+id/disableReminder"
+            android:id="@+id/reminderBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -224,7 +224,7 @@
             app:layout_constraintTop_toBottomOf="@id/reminderStatus" />
 
         <Button
-            android:id="@+id/enableSnooze"
+            android:id="@+id/snoozeBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -238,7 +238,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/disableReminder" />
+            app:layout_constraintTop_toBottomOf="@id/reminderBtn" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
