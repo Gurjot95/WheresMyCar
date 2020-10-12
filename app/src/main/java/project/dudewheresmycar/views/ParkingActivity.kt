@@ -6,10 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.toolbar.view.*
@@ -22,24 +19,27 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var viewModel: ParkingActivityViewModel
     private lateinit var binding: ActivityParkingBinding
 
-    private var mapView: MapView? = null
-    private var googleMap: GoogleMap? = null
+    //private var mapView: MapView? = null
+    private var gMap: GoogleMap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this).get(ParkingActivityViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_parking)
-
-        binding.mapView.onCreate(savedInstanceState)
-        binding.mapView.getMapAsync(this)
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.mapView) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+       // binding.mapView.onCreate(savedInstanceState)
+        //binding.mapView.getMapAsync(this)
 
         binding.yesButton.setOnClickListener {
             addParking()
         }
 
         binding.noButton.setOnClickListener {
-            startActivity(Intent(baseContext, MainActivity::class.java))
+            onBackPressed()
+            //startActivity(Intent(baseContext, MainActivity::class.java))
         }
 
         // Toolbar modifications
@@ -63,7 +63,8 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
-        googleMap?.apply {
+        gMap = googleMap
+        gMap?.apply {
             val sydney = LatLng(-33.852, 151.211)
             addMarker(
                 MarkerOptions()

@@ -76,7 +76,8 @@
                 app:layout_constraintStart_toEndOf="@+id/yes_button"
                 app:layout_constraintTop_toBottomOf="@id/locationInfo" />
 
-        <com.google.android.gms.maps.MapView
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
