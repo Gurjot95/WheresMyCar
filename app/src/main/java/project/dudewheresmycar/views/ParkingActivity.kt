@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.toolbar.view.*
 import project.dudewheresmycar.R
@@ -30,7 +31,7 @@ import project.dudewheresmycar.model.ParkingData
 import project.dudewheresmycar.viewmodel.ParkingActivityViewModel
 
 
-class ParkingActivity : AppCompatActivity(), OnMapReadyCallback {
+class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     lateinit var viewModel: ParkingActivityViewModel
     private lateinit var binding: ActivityParkingBinding
 
@@ -95,18 +96,27 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback {
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
             return
         }
+
         map.isMyLocationEnabled = true
 
         fusedLocationProviderClient.lastLocation.addOnSuccessListener(this) { location ->
-            // Get last known location
+            // Got last known location. In some rare situations this can be null.
             if (location != null) {
                 lastLocation = location
                 val currentLatLng = LatLng(location.latitude, location.longitude)
-                // COORDINATES
-                val parkingLocation = ParkingData(location.latitude, location.longitude)
-                Log.i("COORDINATES", parkingLocation.toString())
+                placeMarkerOnMap(currentLatLng)
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
             }
         }
     }
+
+
+    private fun placeMarkerOnMap(location: LatLng) {
+        val markerOptions = MarkerOptions().position(location)
+        map.addMarker(markerOptions)
+        map.setOnMarkerClickListener(this)
+
+    }
+
+    override fun onMarkerClick(p0: Marker?) = false
 }
