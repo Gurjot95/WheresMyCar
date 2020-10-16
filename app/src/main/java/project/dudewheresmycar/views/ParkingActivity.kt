@@ -1,17 +1,32 @@
 package project.dudewheresmycar.views
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
+import android.os.Looper
+import android.provider.Settings
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.toolbar.view.*
 import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityParkingBinding
+import project.dudewheresmycar.model.ParkingData
 import project.dudewheresmycar.viewmodel.ParkingActivityViewModel
 
 
@@ -19,19 +34,21 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var viewModel: ParkingActivityViewModel
     private lateinit var binding: ActivityParkingBinding
 
-    //private var mapView: MapView? = null
-    private var gMap: GoogleMap? = null
+    private lateinit var map: GoogleMap
+    private lateinit var lastLocation: Location
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this).get(ParkingActivityViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_parking)
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.mapView) as SupportMapFragment
         mapFragment.getMapAsync(this)
-       // binding.mapView.onCreate(savedInstanceState)
-        //binding.mapView.getMapAsync(this)
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         binding.yesButton.setOnClickListener {
             addParking()
@@ -62,15 +79,34 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback {
         // Save all parking data to shared preferences
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
-        gMap = googleMap
-        gMap?.apply {
-            val sydney = LatLng(-33.852, 151.211)
-            addMarker(
-                MarkerOptions()
-                    .position(sydney)
-                    .title("Marker in Sydney")
-            )
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        setUpMap()
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+    }
+
+    private fun setUpMap() {
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+            return
+        }
+        map.isMyLocationEnabled = true
+
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener(this) { location ->
+            // Get last known location
+            if (location != null) {
+                lastLocation = location
+                val currentLatLng = LatLng(location.latitude, location.longitude)
+                // COORDINATES
+                val parkingLocation = ParkingData(location.latitude, location.longitude)
+                Log.i("COORDINATES", parkingLocation.toString())
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+            }
         }
     }
 }

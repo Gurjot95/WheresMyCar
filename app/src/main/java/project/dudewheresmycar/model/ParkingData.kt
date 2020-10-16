@@ -1,5 +1,5 @@
 package project.dudewheresmycar.model
 
-data class ParkingData(val long: Double, val lat: Double) {
+data class ParkingData(val lat: Double, val long: Double, ) {
 
 }

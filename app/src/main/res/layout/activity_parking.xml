@@ -48,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="25dp"
                 android:backgroundTint="@color/yes"
+                android:background="@drawable/rounded_corners"
                 android:fontFamily="@font/segoeui"
                 android:text="@string/yes"
                 android:textAlignment="center"
@@ -67,6 +68,7 @@
                 android:backgroundTint="@color/no"
                 android:fontFamily="@font/segoeui"
                 android:text="@string/no"
+                android:background="@drawable/rounded_corners"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
@@ -76,15 +78,16 @@
                 app:layout_constraintStart_toEndOf="@+id/yes_button"
                 app:layout_constraintTop_toBottomOf="@id/locationInfo" />
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <fragment
             android:id="@+id/mapView"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_margin="25dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/yes_button" />
+            app:layout_constraintTop_toBottomOf="@id/yes_button"
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
