@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityParkingBinding
+import project.dudewheresmycar.model.ParkingData
 import project.dudewheresmycar.viewmodel.ParkingActivityViewModel
 
 
@@ -76,6 +77,7 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         // Display map
         // Set map marker for parking location
         // Save all parking data to shared preferences
+
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
