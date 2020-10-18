@@ -47,6 +47,8 @@ class ReminderActivity : AppCompatActivity() {
         setUpRadioGroup()
 
         reminderBtn.setOnClickListener {
+
+            //TODO Julien: Use a locally stored boolean flag here as well to get the status
             if(reminderBtn.text.toString() == getString(R.string.enable_reminder))
                 reminderBtn.text = getString(R.string.disable_reminder)
             else
@@ -58,6 +60,12 @@ class ReminderActivity : AppCompatActivity() {
 
     private fun setState(){
         // is disabled
+
+        //TODO Julien: Do not compare conditional flags through Strings as these can be changed in future,
+        // instead use a boolean value isEnabled locally through SharedPrefs and use that to check condition
+
+        //TODO Additionally, you can refactor the entire if-else statement below to just 3-4 lines. I want you to think of a way to do this.
+        // Hint: Use teneray operators to change values according to condition and use already defined methods to execute same code
         if (reminderBtn.text.toString() == getString(R.string.enable_reminder)) {
             reminderStatus.text = getString(R.string.disable)
 
@@ -91,6 +99,8 @@ class ReminderActivity : AppCompatActivity() {
 
     private val listener1: RadioGroup.OnCheckedChangeListener =
         RadioGroup.OnCheckedChangeListener { _, checkedId ->
+            //TODO Julien: Use constant values 10,15 etc as final variables at the top of class.
+            // Also Avoid Checking by ID in favor for views in future as its getting deprecated
             if (checkedId != -1) {
                 when (checkedId) {
                     R.id.tenMinutes -> {
@@ -119,6 +129,7 @@ class ReminderActivity : AppCompatActivity() {
 
     private val listener2: RadioGroup.OnCheckedChangeListener =
         RadioGroup.OnCheckedChangeListener { group, checkedId ->
+            //TODO Julien: Similarly here as well!
             if (checkedId != -1) {
                 when (checkedId) {
                     R.id.thirtyMinutes -> {
