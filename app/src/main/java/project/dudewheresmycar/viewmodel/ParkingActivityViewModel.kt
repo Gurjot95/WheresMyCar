@@ -5,4 +5,6 @@ import project.dudewheresmycar.model.ParkingData
 
 class ParkingActivityViewModel : ViewModel() {
 
+
+
 }
