@@ -1,18 +1,11 @@
 package project.dudewheresmycar.views
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.constraintlayout.helper.widget.Layer
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_reminder.*
@@ -21,12 +14,13 @@ import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityReminderBinding
 import project.dudewheresmycar.service.AlarmService
 import project.dudewheresmycar.viewmodel.ReminderActivityViewModel
-import java.util.*
+
 
 class ReminderActivity : AppCompatActivity() {
     lateinit var viewModel: ReminderActivityViewModel
     private lateinit var binding: ActivityReminderBinding
     lateinit var alarmService: AlarmService
+    var selectedTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,27 +33,120 @@ class ReminderActivity : AppCompatActivity() {
         //shape.getDrawable(R.id.semiCircleColor).colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this,R.color.orange), PorterDuff.Mode.SRC_ATOP)
 
         // Toolbar modifications
-        binding.homeToolbar.toolbar.background = ContextCompat.getDrawable(this,R.drawable.semi_circle_orange)
+        binding.homeToolbar.toolbar.background =
+            ContextCompat.getDrawable(this, R.drawable.semi_circle_orange)
         binding.homeToolbar.toolbarLogo.setImageResource(R.drawable.ic_bell)
-        binding.homeToolbar.toolbarLogo.setColorFilter(ContextCompat.getColor(this,R.color.white))
+        binding.homeToolbar.toolbarLogo.setColorFilter(ContextCompat.getColor(this, R.color.white))
         binding.homeToolbar.toolbarTitle.text = resources.getString(R.string.reminder_title)
         binding.homeToolbar.toolbarDesc.text = resources.getString(R.string.reminder_info)
 
-        /* TODO:
-        * Remove reminder / remove pending intent
-        * Replace calendar value w/ exact alarm value
-        */
-
-        //
         alarmService = AlarmService(this)
 
+        setState()
+
+        setUpRadioGroup()
+
         reminderBtn.setOnClickListener {
-            setAlarm { alarmService.setExactAlarm(it) }
+            if(reminderBtn.text.toString() == getString(R.string.enable_reminder))
+                reminderBtn.text = getString(R.string.disable_reminder)
+            else
+                reminderBtn.text = getString(R.string.enable_reminder)
+
+            setState()
         }
     }
 
+    private fun setState(){
+        // is disabled
+        if (reminderBtn.text.toString() == getString(R.string.enable_reminder)) {
+            reminderStatus.text = getString(R.string.disable)
+
+            timerOptions1.clearCheck()
+            timerOptions2.clearCheck()
+            for (i in 0 until timerOptions1.childCount) {
+                (timerOptions1.getChildAt(i) as RadioButton).isEnabled = false
+                (timerOptions2.getChildAt(i) as RadioButton).isEnabled = false
+            }
+        } else { // if enabled
+            reminderStatus.text = getString(R.string.enable)
+
+            for (i in 0 until timerOptions1.childCount) {
+                (timerOptions1.getChildAt(i) as RadioButton).isEnabled = true
+                (timerOptions2.getChildAt(i) as RadioButton).isEnabled = true
+            }
+        }
+    }
+
+    /*
+    * A work around for displaying radioGroup buttons in 2 rows,
+    * used two radioGroups
+    * see: https://stackoverflow.com/questions/10425569/radiogroup-with-two-columns-which-have-ten-radiobuttons
+    * */
+    private fun setUpRadioGroup() {
+        timerOptions1.clearCheck()
+        timerOptions2.clearCheck()
+        timerOptions1.setOnCheckedChangeListener(listener1)
+        timerOptions2.setOnCheckedChangeListener(listener2)
+    }
+
+    private val listener1: RadioGroup.OnCheckedChangeListener =
+        RadioGroup.OnCheckedChangeListener { _, checkedId ->
+            if (checkedId != -1) {
+                when (checkedId) {
+                    R.id.tenMinutes -> {
+                        selectedTime = 10
+                    }
+                    R.id.fifteenMinutes -> {
+                        selectedTime = 15
+                    }
+                    R.id.twentyFiveMinutes -> {
+                        selectedTime = 25
+                    }
+                }
+
+                Toast.makeText(
+                    applicationContext, getString(
+                        R.string.timer_selection,
+                        selectedTime.toString()
+                    ), Toast.LENGTH_SHORT
+                ).show()
+
+                timerOptions2.setOnCheckedChangeListener(null)
+                timerOptions2.clearCheck()
+                timerOptions2.setOnCheckedChangeListener(listener2)
+            }
+        }
+
+    private val listener2: RadioGroup.OnCheckedChangeListener =
+        RadioGroup.OnCheckedChangeListener { group, checkedId ->
+            if (checkedId != -1) {
+                when (checkedId) {
+                    R.id.thirtyMinutes -> {
+                        selectedTime = 30
+                    }
+                    R.id.fortyFiveMinutes -> {
+                        selectedTime = 45
+                    }
+                    R.id.sixtyMinutes -> {
+                        selectedTime = 60
+                    }
+                }
+
+                Toast.makeText(
+                    applicationContext, getString(
+                        R.string.timer_selection,
+                        selectedTime.toString()
+                    ), Toast.LENGTH_SHORT
+                ).show()
+
+                timerOptions1.setOnCheckedChangeListener(null)
+                timerOptions1.clearCheck()
+                timerOptions1.setOnCheckedChangeListener(listener1)
+            }
+        }
+
     private fun setAlarm(callback: (Long) -> Unit) {
-        Calendar.getInstance().apply {
+        /*Calendar.getInstance().apply {
             this.set(Calendar.SECOND, 0)
             this.set(Calendar.MILLISECOND, 0)
             DatePickerDialog(
@@ -86,6 +173,6 @@ class ReminderActivity : AppCompatActivity() {
                 this.get(Calendar.MONTH),
                 this.get(Calendar.DAY_OF_MONTH)
             ).show()
-        }
+        }*/
     }
 }
