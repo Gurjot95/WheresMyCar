@@ -31,7 +31,7 @@ class AlarmService(private val context: Context) {
     private fun getPendingIntent(intent: Intent) =
         PendingIntent.getBroadcast(
             context,
-            getRandomRequestCode(),
+            111,//getRandomRequestCode(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )

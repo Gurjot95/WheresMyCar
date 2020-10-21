@@ -1,6 +1,7 @@
 package project.dudewheresmycar.views
 
 import android.os.Bundle
+import android.util.Log.d
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
@@ -14,13 +15,39 @@ import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityReminderBinding
 import project.dudewheresmycar.service.AlarmService
 import project.dudewheresmycar.viewmodel.ReminderActivityViewModel
+import java.util.*
+import kotlin.properties.Delegates
 
 
 class ReminderActivity : AppCompatActivity() {
     lateinit var viewModel: ReminderActivityViewModel
     private lateinit var binding: ActivityReminderBinding
     lateinit var alarmService: AlarmService
-    var selectedTime: Int = 0
+    var reminderEnabled = false
+    val MINUTES_10 = 10
+    val MINUTES_15 = 15
+    val MINUTES_25 = 25
+    val MINUTES_30 = 30
+    val MINUTES_45 = 45
+    val MINUTES_60 = 60
+
+    private var selectedTime by Delegates.observable(0) { _, oldValue, newValue ->
+        d("test>", "selectedTime $oldValue->$newValue")
+
+        if(newValue in 1..60){
+            val calendar = Calendar.getInstance()
+            val curTimeInMillis = calendar.timeInMillis + (60000 * newValue) // 1 min = 60000 mills
+
+            alarmService.setExactAlarm(curTimeInMillis)
+        } else if(newValue == 0 && oldValue != 0){
+            Toast.makeText(
+                applicationContext, getString(
+                    R.string.timer_disabled,
+                    newValue.toString()
+                ), Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,36 +74,28 @@ class ReminderActivity : AppCompatActivity() {
         setUpRadioGroup()
 
         reminderBtn.setOnClickListener {
-
-            //TODO Julien: Use a locally stored boolean flag here as well to get the status
-            if(reminderBtn.text.toString() == getString(R.string.enable_reminder))
-                reminderBtn.text = getString(R.string.disable_reminder)
-            else
-                reminderBtn.text = getString(R.string.enable_reminder)
-
+            reminderEnabled = !reminderEnabled
             setState()
         }
     }
 
     private fun setState(){
-        // is disabled
-
-        //TODO Julien: Do not compare conditional flags through Strings as these can be changed in future,
-        // instead use a boolean value isEnabled locally through SharedPrefs and use that to check condition
-
         //TODO Additionally, you can refactor the entire if-else statement below to just 3-4 lines. I want you to think of a way to do this.
         // Hint: Use teneray operators to change values according to condition and use already defined methods to execute same code
-        if (reminderBtn.text.toString() == getString(R.string.enable_reminder)) {
+        if (reminderEnabled) {
             reminderStatus.text = getString(R.string.disable)
-
+            reminderBtn.text = getString(R.string.enable_reminder)
             timerOptions1.clearCheck()
             timerOptions2.clearCheck()
+            cancelReminder()
+
             for (i in 0 until timerOptions1.childCount) {
                 (timerOptions1.getChildAt(i) as RadioButton).isEnabled = false
                 (timerOptions2.getChildAt(i) as RadioButton).isEnabled = false
             }
         } else { // if enabled
             reminderStatus.text = getString(R.string.enable)
+            reminderBtn.text = getString(R.string.disable_reminder)
 
             for (i in 0 until timerOptions1.childCount) {
                 (timerOptions1.getChildAt(i) as RadioButton).isEnabled = true
@@ -104,13 +123,13 @@ class ReminderActivity : AppCompatActivity() {
             if (checkedId != -1) {
                 when (checkedId) {
                     R.id.tenMinutes -> {
-                        selectedTime = 10
+                        selectedTime = MINUTES_10
                     }
                     R.id.fifteenMinutes -> {
-                        selectedTime = 15
+                        selectedTime = MINUTES_15
                     }
                     R.id.twentyFiveMinutes -> {
-                        selectedTime = 25
+                        selectedTime = MINUTES_25
                     }
                 }
 
@@ -133,13 +152,13 @@ class ReminderActivity : AppCompatActivity() {
             if (checkedId != -1) {
                 when (checkedId) {
                     R.id.thirtyMinutes -> {
-                        selectedTime = 30
+                        selectedTime = MINUTES_30
                     }
                     R.id.fortyFiveMinutes -> {
-                        selectedTime = 45
+                        selectedTime = MINUTES_45
                     }
                     R.id.sixtyMinutes -> {
-                        selectedTime = 60
+                        selectedTime = MINUTES_60
                     }
                 }
 
@@ -156,34 +175,7 @@ class ReminderActivity : AppCompatActivity() {
             }
         }
 
-    private fun setAlarm(callback: (Long) -> Unit) {
-        /*Calendar.getInstance().apply {
-            this.set(Calendar.SECOND, 0)
-            this.set(Calendar.MILLISECOND, 0)
-            DatePickerDialog(
-                this@ReminderActivity,
-                0,
-                { _, year, month, day ->
-                    this.set(Calendar.YEAR, year)
-                    this.set(Calendar.MONTH, month)
-                    this.set(Calendar.DAY_OF_MONTH, day)
-                    TimePickerDialog(
-                        this@ReminderActivity,
-                        0,
-                        { _, hour, minute ->
-                            this.set(Calendar.HOUR_OF_DAY, hour)
-                            this.set(Calendar.MINUTE, minute)
-                            callback(this.timeInMillis)
-                        },
-                        this.get(Calendar.HOUR_OF_DAY),
-                        this.get(Calendar.MINUTE),
-                        false
-                    ).show()
-                },
-                this.get(Calendar.YEAR),
-                this.get(Calendar.MONTH),
-                this.get(Calendar.DAY_OF_MONTH)
-            ).show()
-        }*/
+    private fun cancelReminder(){
+        selectedTime = 0
     }
 }

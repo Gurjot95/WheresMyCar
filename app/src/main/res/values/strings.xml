@@ -23,5 +23,5 @@
     <string name="enable_reminder">Enable Reminder</string>
     <string name="enable_snooze">Enable Snooze</string>
     <string name="timer_selection">Timer set for %1$s minutes</string>
-
+    <string name="timer_disabled">%1$s minute alarm cancelled</string>
 </resources>
