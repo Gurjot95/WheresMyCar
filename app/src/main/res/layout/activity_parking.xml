@@ -33,83 +33,167 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/homeToolbar">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <FrameLayout
+                    android:id="@+id/setupLocation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
                     android:layout_marginEnd="25dp"
+                    android:paddingBottom="20dp"
+                    android:visibility="visible">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/locationInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/segoeui"
+                            android:paddingTop="25dp"
+                            android:text="@string/location_info"
+                            android:textAlignment="center"
+                            android:textColor="@color/white"
+                            android:textSize="18dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/mapContainer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal|center_vertical"
+                            android:layout_marginTop="20dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="12dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/locationInfo">
+
+                            <fragment
+                                android:id="@+id/mapView"
+                                android:name="com.google.android.gms.maps.SupportMapFragment"
+                                android:layout_width="match_parent"
+                                android:layout_height="300dp" />
+                        </androidx.cardview.widget.CardView>
+
+                        <Button
+                            android:id="@+id/yes_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="25dp"
+                            android:background="@drawable/rounded_corners"
+                            android:backgroundTint="@color/yes"
+                            android:fontFamily="@font/segoeui"
+                            android:text="@string/yes"
+                            android:textAlignment="center"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="18dp"
+                            app:layout_constraintEnd_toStartOf="@+id/no_button"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/mapContainer" />
+
+                        <Button
+                            android:id="@+id/no_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="25dp"
+                            android:background="@drawable/rounded_corners"
+                            android:backgroundTint="@color/no"
+                            android:fontFamily="@font/segoeui"
+                            android:text="@string/no"
+                            android:textAlignment="center"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="18dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/yes_button"
+                            app:layout_constraintTop_toBottomOf="@id/mapContainer" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/setupTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
                     android:paddingBottom="20dp">
 
-                    <TextView
-                        android:id="@+id/locationInfo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/segoeui"
-                        android:paddingTop="25dp"
-                        android:text="@string/location_info"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="18dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/mapContainer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal|center_vertical"
-                        android:layout_marginTop="20dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="12dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/locationInfo">
+                        <TextView
+                            android:id="@+id/timeInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/segoeui"
+                            android:paddingTop="25dp"
+                            android:text="Please set the duration of parking time"
+                            android:textAlignment="center"
+                            android:textColor="@color/white"
+                            android:textSize="18dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                        <fragment
-                            android:id="@+id/mapView"
-                            android:name="com.google.android.gms.maps.SupportMapFragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="300dp" />
-                    </androidx.cardview.widget.CardView>
+                        <TextView
+                            android:id="@+id/startTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30dp"
+                            android:fontFamily="@font/segoeui"
+                            android:text="3:00 AM"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="26dp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@+id/endTime"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/timeInfo" />
 
-                    <Button
-                        android:id="@+id/yes_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="25dp"
-                        android:background="@drawable/rounded_corners"
-                        android:backgroundTint="@color/yes"
-                        android:fontFamily="@font/segoeui"
-                        android:text="@string/yes"
-                        android:textAlignment="center"
-                        android:textAllCaps="false"
-                        android:textColor="@color/white"
-                        android:textSize="18dp"
-                        app:layout_constraintEnd_toStartOf="@+id/no_button"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/mapContainer" />
+                        <TextView
+                            android:id="@+id/endTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30dp"
+                            android:fontFamily="@font/segoeui"
+                            android:text="5:00 AM"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="26dp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/startTime"
+                            app:layout_constraintTop_toBottomOf="@id/timeInfo" />
 
-                    <Button
-                        android:id="@+id/no_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="25dp"
-                        android:background="@drawable/rounded_corners"
-                        android:backgroundTint="@color/no"
-                        android:fontFamily="@font/segoeui"
-                        android:text="@string/no"
-                        android:textAlignment="center"
-                        android:textAllCaps="false"
-                        android:textColor="@color/white"
-                        android:textSize="18dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toEndOf="@+id/yes_button"
-                        app:layout_constraintTop_toBottomOf="@id/mapContainer" />
+                        <Button
+                            android:id="@+id/confirm_parking"
+                            android:layout_width="160dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="25dp"
+                            android:background="@drawable/rounded_corners"
+                            android:backgroundTint="@color/yes"
+                            android:fontFamily="@font/segoeui"
+                            android:text="Confirm Parking"
+                            android:textAlignment="center"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="18dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/endTime"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
 
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </FrameLayout>
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

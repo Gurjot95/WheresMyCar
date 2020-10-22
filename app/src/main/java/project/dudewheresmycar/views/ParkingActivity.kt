@@ -2,12 +2,14 @@ package project.dudewheresmycar.views
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -21,11 +23,13 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.toolbar.view.*
 import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityParkingBinding
 import project.dudewheresmycar.model.ParkingData
 import project.dudewheresmycar.viewmodel.ParkingActivityViewModel
+import java.util.*
 
 
 class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -54,6 +58,10 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
             addParking()
         }
 
+        binding.confirmParking.setOnClickListener {
+            saveParkingInfo()
+        }
+
         binding.noButton.setOnClickListener {
             onBackPressed()
             //startActivity(Intent(baseContext, MainActivity::class.java))
@@ -70,13 +78,20 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         binding.homeToolbar.toolbarDesc.text = resources.getString(R.string.parking_info)
     }
 
+    private fun saveParkingInfo() {
+        //TODO Save all parking data to shared preferences once time and location is setup
+        //Get appropriate values and pass it in these parameters, I am using dummy values for now
+        val parkingDataString = Gson().toJson(ParkingData(2.0, 2.0, Date(), Date()))
+        val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putString("ParkingData", parkingDataString)
+            apply()
+        }
+    }
+
     private fun addParking() {
-        //TODO Save Parking Data here
-        // Get current location
-        // Get current time
-        // Display map
-        // Set map marker for parking location
-        // Save all parking data to shared preferences
+        binding.setupLocation.visibility = View.GONE;
+        binding.setupTime.visibility = View.VISIBLE;
 
     }
 
