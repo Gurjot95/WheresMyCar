@@ -1,5 +1,10 @@
 package project.dudewheresmycar.model
 
-data class ParkingData(val long: Double, val lat: Double) {
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+import java.util.*
+@Parcelize
+data class ParkingData(val lat: Double, val long: Double, val startTime: Date, val endTime: Date):
+    Parcelable {
 
 }

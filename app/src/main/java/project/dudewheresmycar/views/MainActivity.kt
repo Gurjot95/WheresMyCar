@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
         binding.setupParkingBtn.setOnClickListener {
             startActivity(Intent(baseContext, ParkingActivity::class.java))
         }
