@@ -122,11 +122,11 @@
                     android:id="@+id/setupTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    tools:visibility="visible"
                     android:layout_marginStart="25dp"
                     android:layout_marginEnd="25dp"
-                    android:paddingBottom="20dp">
+                    android:paddingBottom="20dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -149,12 +149,15 @@
                             android:id="@+id/startTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/rounded_corners_semiblack"
                             android:fontFamily="@font/segoeui"
+                            android:padding="5dp"
                             android:text="3:00 AM"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/white"
                             android:textSize="26dp"
-                            android:textStyle="bold"
+                            android:textStyle="bold"   android:paddingStart="15dp"
+                            android:paddingEnd="15dp"
                             app:layout_constraintEnd_toStartOf="@+id/endTime"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/timeInfo" />
@@ -163,10 +166,14 @@
                             android:id="@+id/endTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/rounded_corners_semiblack"
                             android:fontFamily="@font/segoeui"
+                            android:padding="5dp"
+                            android:paddingStart="15dp"
+                            android:paddingEnd="15dp"
                             android:text="5:00 AM"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/white"
                             android:textSize="26dp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -186,12 +193,12 @@
                             android:textAllCaps="false"
                             android:textColor="@color/white"
                             android:textSize="18dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/endTime"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/endTime"
 
-                        />
+                            />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </FrameLayout>
             </androidx.cardview.widget.CardView>
