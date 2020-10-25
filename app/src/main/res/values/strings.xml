@@ -23,4 +23,7 @@
     <string name="enable_snooze">Enable Snooze</string>
     <string name="title_activity_maps">Map</string>
     <string name="google_maps_key">AIzaSyAzyx1WJsmUZx4AqMo-CYYmO1c9QoGgoYc</string>
+    <string name="enable_reminder">Enable Reminder</string>
+    <string name="timer_selection">Reminder has been set for %1$s mins before parking ends</string>
+    <string name="timer_disabled">%1$s minute alarm cancelled</string>
 </resources>

@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.util.Log.d
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_reminder.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import project.dudewheresmycar.R
@@ -34,18 +34,18 @@ class ReminderActivity : AppCompatActivity() {
     private var selectedTime by Delegates.observable(0) { _, oldValue, newValue ->
         d("test>", "selectedTime $oldValue->$newValue")
 
-        if(newValue in 1..60){
+        if (newValue in 1..60) {
             val calendar = Calendar.getInstance()
             val curTimeInMillis = calendar.timeInMillis + (60000 * newValue) // 1 min = 60000 mills
 
             alarmService.setExactAlarm(curTimeInMillis)
-        } else if(newValue == 0 && oldValue != 0){
-            Toast.makeText(
-                applicationContext, getString(
+        } else if (newValue == 0 && oldValue != 0) {
+            createSnackBar(
+                getString(
                     R.string.timer_disabled,
                     newValue.toString()
-                ), Toast.LENGTH_SHORT
-            ).show()
+                )
+            )
         }
     }
 
@@ -79,7 +79,7 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
-    private fun setState(){
+    private fun setState() {
         //TODO Additionally, you can refactor the entire if-else statement below to just 3-4 lines. I want you to think of a way to do this.
         // Hint: Use teneray operators to change values according to condition and use already defined methods to execute same code
         if (reminderEnabled) {
@@ -132,19 +132,24 @@ class ReminderActivity : AppCompatActivity() {
                         selectedTime = MINUTES_25
                     }
                 }
-
-                Toast.makeText(
-                    applicationContext, getString(
+                createSnackBar(
+                    getString(
                         R.string.timer_selection,
                         selectedTime.toString()
-                    ), Toast.LENGTH_SHORT
-                ).show()
-
+                    )
+                )
                 timerOptions2.setOnCheckedChangeListener(null)
                 timerOptions2.clearCheck()
                 timerOptions2.setOnCheckedChangeListener(listener2)
             }
         }
+
+    private fun createSnackBar(msg: String) {
+        Snackbar.make(
+            binding.root, msg, Snackbar.LENGTH_SHORT
+        ).show()
+
+    }
 
     private val listener2: RadioGroup.OnCheckedChangeListener =
         RadioGroup.OnCheckedChangeListener { group, checkedId ->
@@ -161,13 +166,12 @@ class ReminderActivity : AppCompatActivity() {
                         selectedTime = MINUTES_60
                     }
                 }
-
-                Toast.makeText(
-                    applicationContext, getString(
+                createSnackBar(
+                    getString(
                         R.string.timer_selection,
                         selectedTime.toString()
-                    ), Toast.LENGTH_SHORT
-                ).show()
+                    )
+                )
 
                 timerOptions1.setOnCheckedChangeListener(null)
                 timerOptions1.clearCheck()
@@ -175,7 +179,7 @@ class ReminderActivity : AppCompatActivity() {
             }
         }
 
-    private fun cancelReminder(){
+    private fun cancelReminder() {
         selectedTime = 0
     }
 }
