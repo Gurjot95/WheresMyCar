@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.view.View
@@ -23,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.toolbar.view.*
 import project.dudewheresmycar.R
@@ -35,7 +38,7 @@ import java.util.*
 class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     lateinit var viewModel: ParkingActivityViewModel
     private lateinit var binding: ActivityParkingBinding
-
+    private lateinit var currentLatLng: LatLng
     private lateinit var map: GoogleMap
     private lateinit var lastLocation: Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -81,17 +84,43 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
     private fun saveParkingInfo() {
         //TODO Save all parking data to shared preferences once time and location is setup
         //Get appropriate values and pass it in these parameters, I am using dummy values for now
-        val parkingDataString = Gson().toJson(ParkingData(2.0, 2.0, Date(), Date()))
+        val parkingDataString = Gson().toJson(
+            ParkingData(
+                currentLatLng.latitude,
+                currentLatLng.longitude,getAddress(),
+                Date(),
+                Date()
+            )
+        )
         val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
         with(sharedPref.edit()) {
             putString("ParkingData", parkingDataString)
             apply()
         }
+
+        Snackbar.make(
+            binding.root, "Parking Data has been saved", Snackbar.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun getAddress(): String {
+        val addresses: List<Address>
+        val geocoder: Geocoder = Geocoder(this, Locale.getDefault())
+
+        addresses = geocoder.getFromLocation(
+            currentLatLng.latitude,
+            currentLatLng.longitude,
+            1
+        ) // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+
+        return addresses[0].getAddressLine(0)
     }
 
     private fun addParking() {
         binding.setupLocation.visibility = View.GONE;
         binding.setupTime.visibility = View.VISIBLE;
+
 
     }
 
@@ -167,7 +196,8 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
             // Got last known location. In some rare situations this can be null.
             if (location != null) {
                 lastLocation = location
-                val currentLatLng = LatLng(location.latitude, location.longitude)
+                currentLatLng = LatLng(location.latitude, location.longitude)
+                binding.addressLine.text = getAddress()
                 placeMarkerOnMap(currentLatLng)
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16f))
             }
@@ -176,7 +206,7 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
 
 
     private fun placeMarkerOnMap(location: LatLng) {
-        val markerOptions = MarkerOptions().position(location)
+        val markerOptions = MarkerOptions().position(location).title("Parking")
             .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_car)))
         map.addMarker(markerOptions)
         map.setOnMarkerClickListener(this)
