@@ -6,239 +6,219 @@
     <data>
 
     </data>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".views.ReminderActivity">
 
-    <include
-        android:id="@+id/homeToolbar"
-        layout="@layout/toolbar"
-        app:layout_constraintTop_toTopOf="parent" />
-<!--
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="250dp"
-        android:background="@drawable/semi_circle_orange"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <ImageView
-        android:id="@+id/toolbarLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:src="@drawable/ic_bell"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/toolbarTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/segoeui"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:text="@string/reminder_title"
-        android:textColor="@color/white"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarLogo" />
-
-    <TextView
-        android:id="@+id/toolbarDesc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/segoeui"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:text="@string/reminder_info"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="18dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarTitle" />
--->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="20dp"
-        android:background="@drawable/rounded_corners_grey"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeToolbar">
+        android:layout_height="match_parent"
+        tools:context=".views.ReminderActivity">
 
-        <TextView
-            android:id="@+id/alertInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/segoeui"
-            android:paddingLeft="25dp"
-            android:paddingTop="25dp"
-            android:paddingRight="25dp"
-            android:paddingBottom="25dp"
-            android:text="@string/alert_info"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintStart_toStartOf="parent"
+        <include
+            android:id="@+id/homeToolbar"
+            layout="@layout/toolbar"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/tenMinutes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:backgroundTint="@android:color/transparent"
-            android:fontFamily="@font/segoeui"
-            android:text="@string/ten_minutes"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/alertInfo" />
-
-        <Button
-            android:id="@+id/fifteenMinutes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:backgroundTint="@android:color/transparent"
-            android:fontFamily="@font/segoeui"
-            android:text="@string/fifteen_minutes"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintStart_toEndOf="@id/tenMinutes"
-            app:layout_constraintTop_toBottomOf="@id/alertInfo" />
-
-        <Button
-            android:id="@+id/twentyFiveMinutes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:backgroundTint="@android:color/transparent"
-            android:fontFamily="@font/segoeui"
-            android:text="@string/twenty_five_minutes"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintStart_toEndOf="@id/fifteenMinutes"
-            app:layout_constraintTop_toBottomOf="@id/alertInfo" />
-
-        <Button
-            android:id="@+id/thirtyMinutes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:backgroundTint="@android:color/transparent"
-            android:fontFamily="@font/segoeui"
-            android:text="@string/thirty_minutes"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tenMinutes" />
-
-        <Button
-            android:id="@+id/fortyFiveMinutes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:backgroundTint="@android:color/transparent"
-            android:fontFamily="@font/segoeui"
-            android:text="@string/forty_five_minutes"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintStart_toEndOf="@id/thirtyMinutes"
-            app:layout_constraintTop_toBottomOf="@id/tenMinutes" />
-
-        <Button
-            android:id="@+id/sixtyMinutes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:backgroundTint="@android:color/transparent"
-            android:fontFamily="@font/segoeui"
-            android:text="@string/sixty_minutes"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintStart_toEndOf="@id/fortyFiveMinutes"
-            app:layout_constraintTop_toBottomOf="@id/tenMinutes" />
-
-        <TextView
-            android:id="@+id/reminderStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/no"
-            android:fontFamily="@font/segoeui"
-            android:text="@string/disable"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_corners_grey"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/thirtyMinutes" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeToolbar">
 
-        <Button
-            android:id="@+id/disableReminder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/no"
-            android:fontFamily="@font/segoeui"
-            android:text="@string/disable_reminder"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reminderStatus" />
+            <TextView
+                android:id="@+id/alertInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/segoeui"
+                android:paddingLeft="25dp"
+                android:paddingTop="15dp"
+                android:paddingRight="25dp"
+                android:paddingBottom="15dp"
+                android:text="@string/alert_info"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/enableSnooze"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/snooze"
-            android:fontFamily="@font/segoeui"
-            android:text="@string/enable_snooze"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/disableReminder" />
+            <RadioGroup
+                android:id="@+id/timerOptions1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/alertInfo">
+
+                <RadioButton
+                    android:id="@+id/tenMinutes"
+                    android:tag="10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/radio_selector"
+                    android:button="@android:color/transparent"
+                    android:checked="true"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/segoeui"
+                    android:padding="10dp"
+                    android:text="@string/ten_minutes"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/radio_text"
+                    android:textSize="18dp" />
+
+                <RadioButton
+                    android:id="@+id/fifteenMinutes"
+                    android:tag="15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/radio_selector"
+                    android:button="@android:color/transparent"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/segoeui"
+                    android:padding="10dp"
+                    android:text="@string/fifteen_minutes"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/radio_text"
+                    android:textSize="18dp" />
+
+                <RadioButton
+                    android:id="@+id/twentyFiveMinutes"
+                    android:tag="25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/radio_selector"
+                    android:button="@android:color/transparent"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/segoeui"
+                    android:padding="10dp"
+                    android:text="@string/twenty_five_minutes"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/radio_text"
+                    android:textSize="18dp" />
+            </RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/timerOptions2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@id/reminderStatus"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/timerOptions1">
+
+                <RadioButton
+                    android:id="@+id/thirtyMinutes"
+                    android:tag="30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/radio_selector"
+                    android:button="@android:color/transparent"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/segoeui"
+                    android:padding="10dp"
+                    android:text="@string/thirty_minutes"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/radio_text"
+                    android:textSize="18dp" />
+
+                <RadioButton
+                    android:id="@+id/fortyFiveMinutes"
+                    android:tag="45"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/radio_selector"
+                    android:button="@android:color/transparent"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/segoeui"
+                    android:padding="10dp"
+                    android:text="@string/forty_five_minutes"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/radio_text"
+                    android:textSize="18dp" />
+
+                <RadioButton
+                    android:id="@+id/sixtyMinutes"
+                    android:tag="60"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/radio_selector"
+                    android:button="@android:color/transparent"
+                    android:elevation="4dp"
+                    android:fontFamily="@font/segoeui"
+                    android:padding="10dp"
+                    android:text="@string/sixty_minutes"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/radio_text"
+                    android:textSize="18dp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/reminderStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/no"
+                android:fontFamily="@font/segoeui"
+                android:text="@string/disable"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/timerOptions2" />
+
+            <Button
+                android:id="@+id/reminderBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/no"
+                android:fontFamily="@font/segoeui"
+                android:text="@string/disable_reminder"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/reminderStatus" />
+
+            <Button
+                android:id="@+id/snoozeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/snooze"
+                android:fontFamily="@font/segoeui"
+                android:text="@string/enable_snooze"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/reminderBtn" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

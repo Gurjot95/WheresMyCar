@@ -23,13 +23,13 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' } // notification
     }
 }
 
 android {
     compileSdkVersion 29
 
-    // NOTE: 'android.dataBinding.enabled' is obsolete and has been replaced with 'android.buildFeatures.dataBinding'
     buildFeatures {
         dataBinding = true
         //viewBinding = true
@@ -70,4 +70,7 @@ dependencies {
 
     // dataBinding
     kapt 'androidx.databinding:databinding-compiler-common:4.0.1'
+
+    // notification lib
+    implementation "io.karn:notify:1.3.0"
 }
