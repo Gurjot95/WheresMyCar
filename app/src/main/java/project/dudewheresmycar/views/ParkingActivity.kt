@@ -249,7 +249,7 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
                 //userCurrentLocation = location
                 currentLatLng = LatLng(location.latitude, location.longitude)
                 val results = FloatArray(1)
-                Location.distanceBetween(
+               if(isParkingSetup) Location.distanceBetween(
                     parkingLatLng.latitude, parkingLatLng.longitude,
                     currentLatLng.latitude, currentLatLng.longitude, results
                 )
@@ -303,26 +303,4 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
     }
 
     override fun onMarkerClick(p0: Marker?) = false
-
-    fun CalculationByDistance(StartP: LatLng, EndP: LatLng): Int {
-        val Radius = 6371 // radius of earth in Km
-        val lat1 = StartP.latitude
-        val lat2 = EndP.latitude
-        val lon1 = StartP.longitude
-        val lon2 = EndP.longitude
-        val dLat = Math.toRadians(lat2 - lat1)
-        val dLon = Math.toRadians(lon2 - lon1)
-        val a = (Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + (Math.cos(Math.toRadians(lat1))
-                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                * Math.sin(dLon / 2)))
-        val c = 2 * Math.asin(Math.sqrt(a))
-        val valueResult = Radius * c
-        val km = valueResult / 1
-        val newFormat = DecimalFormat("####")
-        val kmInDec: Int = Integer.valueOf(newFormat.format(km))
-        val meter = valueResult % 1000
-        val meterInDec: Int = Integer.valueOf(newFormat.format(meter))
-        return meterInDec
-    }
 }
