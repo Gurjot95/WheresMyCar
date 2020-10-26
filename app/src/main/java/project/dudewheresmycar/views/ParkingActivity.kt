@@ -3,6 +3,7 @@ package project.dudewheresmycar.views
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -20,10 +21,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
@@ -32,6 +30,7 @@ import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityParkingBinding
 import project.dudewheresmycar.model.ParkingData
 import project.dudewheresmycar.viewmodel.ParkingActivityViewModel
+import java.text.DecimalFormat
 import java.util.*
 
 
@@ -39,26 +38,35 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
     lateinit var viewModel: ParkingActivityViewModel
     private lateinit var binding: ActivityParkingBinding
     private lateinit var currentLatLng: LatLng
+    private lateinit var parkingLatLng: LatLng
     private lateinit var map: GoogleMap
-    private lateinit var lastLocation: Location
+    private lateinit var sharedPref: SharedPreferences
+
+    //private lateinit var userCurrentLocation: Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    var isParkingSetup: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this).get(ParkingActivityViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_parking)
-
+        isParkingDataSaved()
+        if (isParkingSetup)
+            showAndSetupParkingView()
         //First Check if parking is currently active from sharedprefs,
         // if yes show parking view otherwise let user decide if he wants to set current location
+
         val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.mapView) as SupportMapFragment
+            .findFragmentById(
+                R.id.mapView
+            ) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         binding.yesButton.setOnClickListener {
-            addParking()
+            addParkingTime()
         }
 
         binding.confirmParking.setOnClickListener {
@@ -68,6 +76,14 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         binding.noButton.setOnClickListener {
             onBackPressed()
             //startActivity(Intent(baseContext, MainActivity::class.java))
+        }
+
+        binding.finishBtn.setOnClickListener {
+            with(sharedPref.edit().clear()) {
+                apply()
+            }
+            isParkingSetup = false
+            showHideViews(false)
         }
 
         // Toolbar modifications
@@ -81,18 +97,56 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         binding.homeToolbar.toolbarDesc.text = resources.getString(R.string.parking_info)
     }
 
+    private fun isParkingDataSaved(): Boolean {
+        sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return false
+        isParkingSetup = sharedPref.contains("ParkingData")
+
+        return isParkingSetup
+
+    }
+
+
+    private fun showAndSetupParkingView() {
+        // sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+
+        //binding.showParkedCarView.visibility = View.VISIBLE
+        showHideViews(true)
+        var parkingData: ParkingData = Gson().fromJson(
+            sharedPref.getString("ParkingData", ""),
+            ParkingData::class.java
+        )
+        parkingLatLng = LatLng(parkingData.lat, parkingData.long)
+    }
+
+    private fun showHideViews(isParking: Boolean) {
+        binding.setupLocation.visibility = View.VISIBLE
+        binding.setupTime.visibility = View.GONE
+
+        binding.progressCircular.visibility = if (isParking) View.VISIBLE else View.GONE
+        binding.yesButton.visibility = if (isParking) View.GONE else View.VISIBLE
+        binding.noButton.visibility = if (isParking) View.GONE else View.VISIBLE
+        binding.finishBtn.visibility = if (isParking) View.VISIBLE else View.GONE
+    }
+
+
+    private fun addParkingTime() {
+        binding.setupLocation.visibility = View.GONE;
+        binding.setupTime.visibility = View.VISIBLE;
+
+    }
+
     private fun saveParkingInfo() {
         //TODO Save all parking data to shared preferences once time and location is setup
         //Get appropriate values and pass it in these parameters, I am using dummy values for now
         val parkingDataString = Gson().toJson(
             ParkingData(
                 currentLatLng.latitude,
-                currentLatLng.longitude,getAddress(),
+                currentLatLng.longitude, getAddress(currentLatLng),
                 Date(),
                 Date()
             )
         )
-        val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        //val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
         with(sharedPref.edit()) {
             putString("ParkingData", parkingDataString)
             apply()
@@ -101,15 +155,17 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         Snackbar.make(
             binding.root, "Parking Data has been saved", Snackbar.LENGTH_SHORT
         ).show()
+        // onBackPressed()
+        showAndSetupParkingView()
     }
 
-    private fun getAddress(): String {
+    private fun getAddress(latLng: LatLng): String {
         val addresses: List<Address>
         val geocoder: Geocoder = Geocoder(this, Locale.getDefault())
 
         addresses = geocoder.getFromLocation(
-            currentLatLng.latitude,
-            currentLatLng.longitude,
+            latLng.latitude,
+            latLng.longitude,
             1
         ) // Here 1 represent max location result to returned, by documents it recommended 1 to 5
 
@@ -117,12 +173,6 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         return addresses[0].getAddressLine(0)
     }
 
-    private fun addParking() {
-        binding.setupLocation.visibility = View.GONE;
-        binding.setupTime.visibility = View.VISIBLE;
-
-
-    }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
@@ -195,22 +245,48 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         fusedLocationProviderClient.lastLocation.addOnSuccessListener(this) { location ->
             // Got last known location. In some rare situations this can be null.
             if (location != null) {
-                lastLocation = location
+
+                //userCurrentLocation = location
                 currentLatLng = LatLng(location.latitude, location.longitude)
-                binding.addressLine.text = getAddress()
-                placeMarkerOnMap(currentLatLng)
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16f))
+                val results = FloatArray(1)
+                Location.distanceBetween(
+                    parkingLatLng.latitude, parkingLatLng.longitude,
+                    currentLatLng.latitude, currentLatLng.longitude, results
+                )
+                binding.addressLine.text = if(isParkingSetup) "Your car is parked at "+getAddress(
+                    parkingLatLng
+                ) + " which is "+results[0]+" meter away from you!" else getAddress(
+                    currentLatLng
+                )
+                when (isParkingSetup) {
+                    true -> {
+                        placeMarkerOnMap(parkingLatLng)
+                    }
+                    false -> {
+                        placeMarkerOnMap(currentLatLng)
+                    }
+                }
+                val builder: LatLngBounds.Builder = LatLngBounds.Builder()
+                if (isParkingSetup) builder.include(parkingLatLng)
+                builder.include(currentLatLng)
+                val bounds = builder.build()
+                val width = resources.displayMetrics.widthPixels
+                val height = resources.displayMetrics.heightPixels
+                val padding = (width * 0.15).toInt()
+                val cu: CameraUpdate =
+                    CameraUpdateFactory.newLatLngBounds(bounds, padding)
+                map.animateCamera(cu)
             }
         }
     }
 
 
-    private fun placeMarkerOnMap(location: LatLng) {
+    private fun placeMarkerOnMap(location: LatLng): MarkerOptions {
         val markerOptions = MarkerOptions().position(location).title("Parking")
             .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_car)))
         map.addMarker(markerOptions)
         map.setOnMarkerClickListener(this)
-
+        return markerOptions
     }
 
     private fun getMarkerIconFromDrawable(drawable: Drawable): BitmapDescriptor? {
@@ -227,4 +303,26 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
     }
 
     override fun onMarkerClick(p0: Marker?) = false
+
+    fun CalculationByDistance(StartP: LatLng, EndP: LatLng): Int {
+        val Radius = 6371 // radius of earth in Km
+        val lat1 = StartP.latitude
+        val lat2 = EndP.latitude
+        val lon1 = StartP.longitude
+        val lon2 = EndP.longitude
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val a = (Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + (Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2)))
+        val c = 2 * Math.asin(Math.sqrt(a))
+        val valueResult = Radius * c
+        val km = valueResult / 1
+        val newFormat = DecimalFormat("####")
+        val kmInDec: Int = Integer.valueOf(newFormat.format(km))
+        val meter = valueResult % 1000
+        val meterInDec: Int = Integer.valueOf(newFormat.format(meter))
+        return meterInDec
+    }
 }
