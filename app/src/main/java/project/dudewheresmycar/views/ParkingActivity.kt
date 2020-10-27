@@ -122,7 +122,6 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         isParkingSetup = sharedPref.contains("ParkingData")
 
         return isParkingSetup
-
     }
 
 
