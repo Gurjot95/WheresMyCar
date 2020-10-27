@@ -210,6 +210,7 @@
                             android:textColor="@color/white"
                             android:textSize="26dp"
                             android:textStyle="bold"
+                            android:textAllCaps="true"
                             app:layout_constraintEnd_toStartOf="@+id/endTime"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/timeInfo" />
@@ -228,6 +229,7 @@
                             android:textColor="@color/white"
                             android:textSize="26dp"
                             android:textStyle="bold"
+                            android:textAllCaps="true"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/startTime"
                             app:layout_constraintTop_toBottomOf="@id/timeInfo" />
