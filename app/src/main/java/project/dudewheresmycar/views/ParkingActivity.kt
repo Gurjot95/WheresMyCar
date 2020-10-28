@@ -158,23 +158,38 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
 
         showHideViews(true)
 
-        Log.i("TIMER",((MINUTES.between(startTime, LocalTime.now()).toFloat() /MINUTES.between(startTime,endTime).toFloat())*100).toString())
+        Log.i(
+            "TIMER",
+            ((MINUTES.between(startTime, LocalTime.now()).toFloat() / MINUTES.between(
+                startTime,
+                endTime
+            ).toFloat()) * 100).toString()
+        )
 
-        var progressBar : CircularTimerView = binding.progressCircular
+        var progressBar: CircularTimerView = binding.progressCircular
 
 
-        progressBar.setCircularTimerListener(object : CircularTimerListener {
-            override fun updateDataOnTick(remainingTimeInMs: Long): String? {
-                progressBar.progress = (MINUTES.between(startTime, LocalTime.now()).toFloat() /MINUTES.between(startTime,endTime).toFloat())*100
-                return (((remainingTimeInMs/1000)/60)+1).toString()
-            }
-            override fun onTimerFinished() {
-                progressBar.setPrefix("");
-                progressBar.setSuffix("");
-                progressBar.setText("Finished!");
-                Toast.makeText(this@ParkingActivity, "FINISHED", Toast.LENGTH_SHORT).show()
-            }
-        },MINUTES.between(LocalTime.now(),endTime), TimeFormatEnum.MINUTES, MINUTES.between(startTime,endTime)
+        progressBar.setCircularTimerListener(
+            object : CircularTimerListener {
+                override fun updateDataOnTick(remainingTimeInMs: Long): String? {
+                    progressBar.progress =
+                        (MINUTES.between(startTime, LocalTime.now()).toFloat() / MINUTES.between(
+                            startTime,
+                            endTime
+                        ).toFloat()) * 100
+                    return (((remainingTimeInMs / 1000) / 60) + 1).toString()
+                }
+
+                override fun onTimerFinished() {
+                    progressBar.setPrefix("");
+                    progressBar.setSuffix("");
+                    progressBar.setText("Finished!");
+                    Toast.makeText(this@ParkingActivity, "FINISHED", Toast.LENGTH_SHORT).show()
+                }
+            },
+            MINUTES.between(LocalTime.now(), endTime),
+            TimeFormatEnum.MINUTES,
+            MINUTES.between(startTime, endTime)
         )
         progressBar.startTimer()
 
@@ -184,12 +199,18 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         binding.setupLocation.visibility = View.VISIBLE
         binding.setupTime.visibility = View.GONE
 
-        binding.homeToolbar.toolbarTitle.text = if (isParking) "Current Parking Details" else resources.getString(R.string.parking_title)
-        binding.homeToolbar.toolbarDesc.text = if (isParking) getAddress(parkingLatLng) else resources.getString(R.string.parking_info)
-        binding.addressLine.text = if (!isParking) getAddress(parkingLatLng) else binding.addressLine.text
+        binding.homeToolbar.toolbarTitle.text =
+            if (isParking) "Current Parking Details" else resources.getString(R.string.parking_title)
+        binding.homeToolbar.toolbarDesc.text =
+            if (isParking) getAddress(parkingLatLng) else resources.getString(R.string.parking_info)
+        binding.addressLine.text =
+            if (!isParking) getAddress(parkingLatLng) else binding.addressLine.text
         //binding.homeToolbar.toolbar.background = if (isParking) ContextCompat.getDrawable(this, R.drawable.semi_circle) else ContextCompat.getDrawable(this, R.drawable.semi_circle_cyan)
 
-        binding.locationInfo.text = if (isParking) "$startTime - $endTime\nTime remaining for your parking" else resources.getString(R.string.location_info)
+        binding.locationInfo.text =
+            if (isParking) "$startTime - $endTime\nTime remaining for your parking" else resources.getString(
+                R.string.location_info
+            )
         binding.progressCircular.visibility = if (isParking) View.VISIBLE else View.GONE
         binding.yesButton.visibility = if (isParking) View.GONE else View.VISIBLE
         binding.noButton.visibility = if (isParking) View.GONE else View.VISIBLE
@@ -222,7 +243,10 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
                 cal.set(Calendar.HOUR_OF_DAY, hour)
                 cal.set(Calendar.MINUTE, minute)
                 binding.startTime.text = SimpleDateFormat("h:mm a").format(cal.time)
-                startTime = LocalTime.parse(binding.startTime.text, DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+                startTime = LocalTime.parse(
+                    binding.startTime.text,
+                    DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+                )
                 Log.i("START TIME", startTime.format(DateTimeFormatter.ofPattern("h:mm a")))
             }
             TimePickerDialog(
@@ -237,7 +261,10 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
                 cal.set(Calendar.HOUR_OF_DAY, hour)
                 cal.set(Calendar.MINUTE, minute)
                 binding.endTime.text = SimpleDateFormat("h:mm a").format(cal.time)
-                endTime = LocalTime.parse(binding.endTime.text,  DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+                endTime = LocalTime.parse(
+                    binding.endTime.text,
+                    DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+                )
                 Log.i("END TIME", endTime.format(DateTimeFormatter.ofPattern("h:mm a")))
             }
             TimePickerDialog(
@@ -359,19 +386,20 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         fusedLocationProviderClient.lastLocation.addOnSuccessListener(this) { location ->
             // Got last known location. In some rare situations this can be null.
             if (location != null) {
-
+                map.clear();
                 //userCurrentLocation = location
                 currentLatLng = LatLng(location.latitude, location.longitude)
                 val results = FloatArray(1)
-               if(isParkingSetup) Location.distanceBetween(
-                   parkingLatLng.latitude, parkingLatLng.longitude,
-                   currentLatLng.latitude, currentLatLng.longitude, results
-               )
-                binding.addressLine.text = if(isParkingSetup) "Your car is parked at "+getAddress(
-                    parkingLatLng
-                ) + " which is "+results[0]+" meter away from you!" else getAddress(
-                    currentLatLng
+                if (isParkingSetup) Location.distanceBetween(
+                    parkingLatLng.latitude, parkingLatLng.longitude,
+                    currentLatLng.latitude, currentLatLng.longitude, results
                 )
+                binding.addressLine.text =
+                    if (isParkingSetup) "Your car is parked at " + getAddress(
+                        parkingLatLng
+                    ) + " which is " + results[0] + " meter away from you!" else getAddress(
+                        currentLatLng
+                    )
                 when (isParkingSetup) {
                     true -> {
                         placeMarkerOnMap(parkingLatLng)
