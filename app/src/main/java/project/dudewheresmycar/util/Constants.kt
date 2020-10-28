@@ -4,6 +4,7 @@ object Constants {
     const val EXTRA_EXACT_ALARM_TIME = "EXTRA_EXACT_ALARM_TIME"
     const val EXTRA_SNOOZE = "EXTRA_SNOOZE"
     const val ACTION_SET_EXACT = "ACTION_SET_EXTRA"
+    const val PREF_PARKING_DATA = "ParkingData"
     const val MINUTES_10 = 10
     const val MINUTES_15 = 15
     const val MINUTES_25 = 25

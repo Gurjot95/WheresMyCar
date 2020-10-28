@@ -12,10 +12,12 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_reminder.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityReminderBinding
+import project.dudewheresmycar.model.ParkingData
 import project.dudewheresmycar.receiver.AlarmReceiver
 import project.dudewheresmycar.service.AlarmService
 import project.dudewheresmycar.util.Constants
@@ -28,6 +30,7 @@ class ReminderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReminderBinding
     private lateinit var alarmService: AlarmService
     private lateinit var sharedPref: SharedPreferences
+    lateinit var parkingData: ParkingData
     var isParkingSetup: Boolean = false
     var reminderEnabled: Boolean = false
     var alarmTime: Long = 0
@@ -35,19 +38,37 @@ class ReminderActivity : AppCompatActivity() {
     private var selectedTime by Delegates.observable(0) { _, oldValue, newValue ->
 
         if (newValue in 1..60) {
-            val calendar = Calendar.getInstance()
+            sharedPref = getSharedPreferences("views.ParkingActivity", Context.MODE_PRIVATE)
 
-            // TODO: Replace with the one from shared pref
-            val SAMPLEPARKINGTIME = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 60) // this is 1hr
-            val curTimeInMillis = SAMPLEPARKINGTIME - (Constants.MIN_TO_MILLI * newValue) // 1hr - selected, NOTE: 1 min = 60000 mills
-            //val SAMPLEPARKINGTIME = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 1) // this is 1hr
-            //val curTimeInMillis = SAMPLEPARKINGTIME - (Constants.MIN_TO_MILLI * 1) // 1hr - selected, NOTE: 1 min = 60000 mills
-            // TODO: Save the value below to shared pref
-            alarmTime = curTimeInMillis
-            d("test>", "alarmTime is " + convertDate(alarmTime))
+            if(sharedPref != null){
+                parkingData = Gson().fromJson(
+                    sharedPref.getString("ParkingData", ""),
+                    ParkingData::class.java
+                )
 
-            alarmService.setExactAlarm(curTimeInMillis)
+                val calendar = Calendar.getInstance()
 
+                // TODO: parkingTime Convert to millis
+                // val parkingTime = parkingData.endTime
+                // val parkingTime = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 60) // this is 1hr
+                // val curTimeInMillis = parkingTime - (Constants.MIN_TO_MILLI * newValue) // 1hr - selected, NOTE: 1 min = 60000 mills
+
+                val SAMPLEPARKINGTIME = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 1) // this is 1hr
+                val curTimeInMillis = SAMPLEPARKINGTIME - (Constants.MIN_TO_MILLI * 1) // 1hr - selected, NOTE: 1 min = 60000 mills
+
+                /*with(sharedPref.edit()) {
+                    putString("ParkingData", parkingDataString)
+                    apply()
+                }*/
+
+                alarmTime = curTimeInMillis
+                alarmService.setExactAlarm(curTimeInMillis)
+
+                d("test>", "alarmTime is " + convertDate(alarmTime))
+
+            } else {
+                cancelReminder();
+            }
         } else if (newValue == 0 && oldValue != 0) {
             createSnackBar(
                 getString(R.string.timer_disabled)
@@ -102,12 +123,13 @@ class ReminderActivity : AppCompatActivity() {
             reminderBtn.text = getString(R.string.enable_reminder)
             timerOptions1.clearCheck()
             timerOptions2.clearCheck()
-            cancelReminder()
 
             for (i in 0 until timerOptions1.childCount) {
                 (timerOptions1.getChildAt(i) as RadioButton).isEnabled = false
                 (timerOptions2.getChildAt(i) as RadioButton).isEnabled = false
             }
+
+            cancelReminder()
         } else { // if enabled
             reminderStatus.text = getString(R.string.enable)
             reminderBtn.text = getString(R.string.disable_reminder)
@@ -166,7 +188,6 @@ class ReminderActivity : AppCompatActivity() {
 
     private val listener2: RadioGroup.OnCheckedChangeListener =
         RadioGroup.OnCheckedChangeListener { group, checkedId ->
-            //TODO Julien: Similarly here as well!
             if (checkedId != -1) {
                 when (checkedId) {
                     R.id.thirtyMinutes -> {
@@ -193,6 +214,7 @@ class ReminderActivity : AppCompatActivity() {
         }
 
     private fun cancelReminder() {
+        alarmService.cancelAlarm()
         selectedTime = 0
     }
 

@@ -9,14 +9,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
+import com.google.gson.Gson
 import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityMainBinding
+import project.dudewheresmycar.model.ParkingData
 import project.dudewheresmycar.viewmodel.MainActivityViewModel
 
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainActivityViewModel
     private lateinit var binding: ActivityMainBinding
+    private lateinit var sharedPref:SharedPreferences
+    private lateinit var parkingData:ParkingData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,11 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         }
+
+        sharedPref = getSharedPreferences("views.ParkingActivity", Context.MODE_PRIVATE)
+
+        if (sharedPref == null)
+            binding.setupReminderBtn.setEnabled(false)
     }
 
 }

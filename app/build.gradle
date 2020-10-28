@@ -80,5 +80,5 @@ dependencies {
 
 
     // notification lib
-    implementation "io.karn:notify:1.3.0"
+    // implementation "io.karn:notify:1.3.0"
 }

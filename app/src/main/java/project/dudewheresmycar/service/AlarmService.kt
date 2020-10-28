@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log.d
 import project.dudewheresmycar.receiver.AlarmReceiver
 import project.dudewheresmycar.util.Constants
 import project.dudewheresmycar.util.RandomUtil
@@ -56,4 +57,13 @@ class AlarmService(private val context: Context) {
 
     private fun getRandomRequestCode() = RandomUtil.getRandomInt()
 
+    fun cancelAlarm () {
+        val pendingIntent = getPendingIntent(
+            getIntent().apply {
+                action = Constants.ACTION_SET_EXACT
+            }
+        )
+        alarmManager?.cancel(pendingIntent)
+        d("test>", "alarmCancelled");
+    }
 }
