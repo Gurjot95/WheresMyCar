@@ -13,7 +13,7 @@
         tools:context=".views.ParkingActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <include
@@ -56,14 +56,16 @@
                             android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="18dp"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
+
                         <com.view.circulartimerview.CircularTimerView
                             android:id="@+id/progress_circular"
                             android:layout_width="250dp"
                             android:layout_height="250dp"
-                            app:backgroundColor="#e76130"
                             android:visibility="gone"
+                            app:backgroundColor="#e76130"
                             app:backgroundWidth="8"
                             app:isClockwise="true"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -73,17 +75,19 @@
                             app:prefix=""
                             app:progressBackgroundColor="#eee"
                             app:progressColor="#000"
-                            app:progressText="58"
                             app:progressTextColor="#eee"
-                            app:startingPoint="bottom"
+                            app:startingPoint="top"
                             app:suffix=" min"
-                            app:textSize="26sp" />
+                            app:textSize="26sp"
+                            tools:progressText="58"
+                            tools:visibility="visible" />
+
                         <androidx.cardview.widget.CardView
                             android:id="@+id/mapContainer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal|center_vertical"
-                            android:layout_marginTop="0dp"
+                            android:layout_marginTop="5dp"
                             app:cardCornerRadius="12dp"
                             app:cardElevation="12dp"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -102,10 +106,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
+                            android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="18sp"
                             app:layout_constraintEnd_toEndOf="parent"
-                            android:textAlignment="center"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/mapContainer"
                             tools:text="Address is Fitzroy, 2082" />
@@ -146,26 +150,68 @@
                             app:layout_constraintStart_toEndOf="@+id/yes_button"
                             app:layout_constraintTop_toBottomOf="@id/addressLine" />
 
+                        <Button
+                            android:id="@+id/refresh_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:background="@drawable/rounded_corners"
+                            android:backgroundTint="@color/cyan"
+                            android:fontFamily="@font/segoeui"
+                            android:padding="10dp"
+                            android:text="Refresh Location"
+                            android:textAlignment="center"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:visibility="gone"
+                            tools:visibility="visible"
+                            android:textSize="14dp"
+                            app:layout_constraintEnd_toStartOf="@+id/no_button"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/addressLine" />
+
+                        <Button
+                            android:id="@+id/reminders_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:background="@drawable/rounded_corners"
+                            android:backgroundTint="@color/orange"
+                            android:fontFamily="@font/segoeui"
+                            android:padding="10dp"
+                            android:text="Setup Reminders"
+                            android:textAlignment="center"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="14dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+android:visibility="gone"
+                            tools:visibility="visible"
+                            app:layout_constraintStart_toEndOf="@+id/yes_button"
+                            app:layout_constraintTop_toBottomOf="@id/addressLine" />
+
 
                         <Button
                             android:id="@+id/finish_btn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            android:layout_margin="15dp"
-                            android:padding="10dp"
+
+                            android:layout_marginTop="25dp"
                             android:background="@drawable/rounded_corners"
-                            android:backgroundTint="@color/yes"
+                            android:backgroundTint="@color/no"
                             android:fontFamily="@font/segoeui"
+                            android:padding="10dp"
                             android:text="Finish Parking"
                             android:textAlignment="center"
                             android:textAllCaps="false"
                             android:textColor="@color/white"
                             android:textSize="18dp"
+                            android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.5"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/no_button" />
+                            app:layout_constraintTop_toBottomOf="@id/refresh_button"
+                            tools:visibility="visible" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </FrameLayout>
 
@@ -207,10 +253,10 @@
                             android:paddingStart="15dp"
                             android:paddingEnd="15dp"
                             android:text="3:00 AM"
+                            android:textAllCaps="true"
                             android:textColor="@color/white"
                             android:textSize="26dp"
                             android:textStyle="bold"
-                            android:textAllCaps="true"
                             app:layout_constraintEnd_toStartOf="@+id/endTime"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/timeInfo" />
@@ -226,10 +272,10 @@
                             android:paddingStart="15dp"
                             android:paddingEnd="15dp"
                             android:text="5:00 AM"
+                            android:textAllCaps="true"
                             android:textColor="@color/white"
                             android:textSize="26dp"
                             android:textStyle="bold"
-                            android:textAllCaps="true"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/startTime"
                             app:layout_constraintTop_toBottomOf="@id/timeInfo" />

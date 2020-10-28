@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -42,6 +43,7 @@ import java.lang.Math.ceil
 import java.sql.Time
 import java.time.temporal.ChronoUnit.MINUTES
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -102,7 +104,22 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
             }
             isParkingSetup = false
             showHideViews(false)
+            setUpMap()
         }
+
+        binding.refreshButton.setOnClickListener {
+            setUpMap()
+        }
+
+        binding.remindersButton.setOnClickListener {
+            startActivity(
+                Intent(
+                    baseContext,
+                    ReminderActivity::class.java
+                )
+            )
+        }
+
 
         // Toolbar modifications
         binding.homeToolbar.toolbarLogo.setImageResource(R.drawable.ic_traffic)
@@ -125,7 +142,6 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun showAndSetupParkingView() {
         // sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
 
@@ -136,24 +152,32 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         )
         parkingLatLng = LatLng(parkingData.lat, parkingData.long)
 
-        showHideViews(true)
-
         Log.i("DATA", parkingData.toString())
         startTime = LocalTime.parse(parkingData.startTime)
         endTime = LocalTime.parse(parkingData.endTime)
-        Log.i("TIMER", MINUTES.between(startTime,endTime).toString())
+
+        showHideViews(true)
+
+        Log.i("TIMER",((MINUTES.between(startTime, LocalTime.now()).toFloat() /MINUTES.between(startTime,endTime).toFloat())*100).toString())
 
         var progressBar : CircularTimerView = binding.progressCircular
+
+
         progressBar.setCircularTimerListener(object : CircularTimerListener {
             override fun updateDataOnTick(remainingTimeInMs: Long): String? {
+                progressBar.progress = (MINUTES.between(startTime, LocalTime.now()).toFloat() /MINUTES.between(startTime,endTime).toFloat())*100
                 return (((remainingTimeInMs/1000)/60)+1).toString()
             }
             override fun onTimerFinished() {
+                progressBar.setPrefix("");
+                progressBar.setSuffix("");
+                progressBar.setText("Finished!");
                 Toast.makeText(this@ParkingActivity, "FINISHED", Toast.LENGTH_SHORT).show()
             }
-        },MINUTES.between(startTime,endTime), TimeFormatEnum.MINUTES, MINUTES.between(startTime,endTime)
+        },MINUTES.between(LocalTime.now(),endTime), TimeFormatEnum.MINUTES, MINUTES.between(startTime,endTime)
         )
         progressBar.startTimer()
+
     }
 
     private fun showHideViews(isParking: Boolean) {
@@ -163,17 +187,18 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         binding.homeToolbar.toolbarTitle.text = if (isParking) "Current Parking Details" else resources.getString(R.string.parking_title)
         binding.homeToolbar.toolbarDesc.text = if (isParking) getAddress(parkingLatLng) else resources.getString(R.string.parking_info)
         binding.addressLine.text = if (!isParking) getAddress(parkingLatLng) else binding.addressLine.text
-        binding.homeToolbar.toolbar.background = if (isParking) ContextCompat.getDrawable(this, R.drawable.semi_circle) else ContextCompat.getDrawable(this, R.drawable.semi_circle_cyan)
+        //binding.homeToolbar.toolbar.background = if (isParking) ContextCompat.getDrawable(this, R.drawable.semi_circle) else ContextCompat.getDrawable(this, R.drawable.semi_circle_cyan)
 
-        binding.locationInfo.visibility = if (isParking) View.GONE else View.VISIBLE
+        binding.locationInfo.text = if (isParking) "$startTime - $endTime\nTime remaining for your parking" else resources.getString(R.string.location_info)
         binding.progressCircular.visibility = if (isParking) View.VISIBLE else View.GONE
         binding.yesButton.visibility = if (isParking) View.GONE else View.VISIBLE
         binding.noButton.visibility = if (isParking) View.GONE else View.VISIBLE
+        binding.refreshButton.visibility = if (isParking) View.VISIBLE else View.GONE
+        binding.remindersButton.visibility = if (isParking) View.VISIBLE else View.GONE
         binding.finishBtn.visibility = if (isParking) View.VISIBLE else View.GONE
     }
 
     // Update startTime and endTime
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun addParkingTime() {
         binding.setupLocation.visibility = View.GONE;
         binding.setupTime.visibility = View.VISIBLE;
@@ -223,7 +248,7 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     private fun saveParkingInfo() {
         //TODO Save all parking data to shared preferences once time and location is setup
         //Get appropriate values and pass it in these parameters, I am using dummy values for now
