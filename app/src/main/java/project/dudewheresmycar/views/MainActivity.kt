@@ -20,14 +20,24 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainActivityViewModel
     private lateinit var binding: ActivityMainBinding
     private lateinit var sharedPref:SharedPreferences
-    private lateinit var parkingData:ParkingData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        
+
+        // Show ParkingActivity if parking is active
+        sharedPref = getSharedPreferences("views.ParkingActivity", Context.MODE_PRIVATE)
+        if (sharedPref.contains("ParkingData")) {
+            startActivity(
+                Intent(
+                    baseContext,
+                    ParkingActivity::class.java
+                )
+            )
+        }
+
         binding.setupParkingBtn.setOnClickListener {
             startActivity(Intent(baseContext, ParkingActivity::class.java))
         }

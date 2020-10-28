@@ -93,7 +93,7 @@ class ReminderActivity : AppCompatActivity() {
         binding.homeToolbar.toolbar.background =
             ContextCompat.getDrawable(this, R.drawable.semi_circle_orange)
         binding.homeToolbar.toolbarLogo.setImageResource(R.drawable.ic_bell)
-        binding.homeToolbar.toolbarLogo.setColorFilter(ContextCompat.getColor(this, R.color.white))
+        //binding.homeToolbar.toolbarLogo.setColorFilter(ContextCompat.getColor(this, R.color.white))
         binding.homeToolbar.toolbarTitle.text = resources.getString(R.string.reminder_title)
         binding.homeToolbar.toolbarDesc.text = resources.getString(R.string.reminder_info)
 

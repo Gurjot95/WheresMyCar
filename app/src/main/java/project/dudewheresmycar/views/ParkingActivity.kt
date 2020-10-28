@@ -74,9 +74,8 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         isParkingDataSaved()
         if (isParkingSetup)
             showAndSetupParkingView()
-        //First Check if parking is currently active from sharedprefs,
+        // First Check if parking is currently active from sharedprefs,
         // if yes show parking view otherwise let user decide if he wants to set current location
-
         val mapFragment = supportFragmentManager
             .findFragmentById(
                 R.id.mapView
@@ -91,6 +90,7 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
 
         binding.confirmParking.setOnClickListener {
             saveParkingInfo()
+            mapFragment.getMapAsync(this)
         }
 
         binding.noButton.setOnClickListener {
@@ -124,11 +124,11 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         // Toolbar modifications
         binding.homeToolbar.toolbarLogo.setImageResource(R.drawable.ic_traffic)
         binding.homeToolbar.toolbarLogo.setColorFilter(ContextCompat.getColor(this, R.color.white))
-        /*
         binding.homeToolbar.toolbar.background = ContextCompat.getDrawable(
             this,
             R.drawable.semi_circle_cyan
         )
+        /*
         binding.homeToolbar.toolbarTitle.text = resources.getString(R.string.parking_title)
         binding.homeToolbar.toolbarDesc.text = resources.getString(R.string.parking_info)
         */
@@ -172,6 +172,7 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         progressBar.setCircularTimerListener(
             object : CircularTimerListener {
                 override fun updateDataOnTick(remainingTimeInMs: Long): String? {
+                    progressBar.setText("Time Left\n")
                     progressBar.progress =
                         (MINUTES.between(startTime, LocalTime.now()).toFloat() / MINUTES.between(
                             startTime,
@@ -192,7 +193,6 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
             MINUTES.between(startTime, endTime)
         )
         progressBar.startTimer()
-
     }
 
     private fun showHideViews(isParking: Boolean) {
@@ -202,15 +202,14 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         binding.homeToolbar.toolbarTitle.text =
             if (isParking) "Current Parking Details" else resources.getString(R.string.parking_title)
         binding.homeToolbar.toolbarDesc.text =
-            if (isParking) getAddress(parkingLatLng) else resources.getString(R.string.parking_info)
+            if (isParking) "${getAddress(parkingLatLng)}\n${parkingLatLng.latitude}, ${parkingLatLng.longitude}\n${startTime.format(DateTimeFormatter.ofPattern("h:mm a"))} - ${endTime.format(DateTimeFormatter.ofPattern("h:mm a"))}" else resources.getString(R.string.parking_info)
         binding.addressLine.text =
             if (!isParking) getAddress(parkingLatLng) else binding.addressLine.text
-        //binding.homeToolbar.toolbar.background = if (isParking) ContextCompat.getDrawable(this, R.drawable.semi_circle) else ContextCompat.getDrawable(this, R.drawable.semi_circle_cyan)
-
         binding.locationInfo.text =
-            if (isParking) "$startTime - $endTime\nTime remaining for your parking" else resources.getString(
+            if (isParking) "${startTime.format(DateTimeFormatter.ofPattern("h:mm a"))} - ${endTime.format(DateTimeFormatter.ofPattern("h:mm a"))}\nTime remaining for your parking" else resources.getString(
                 R.string.location_info
             )
+
         binding.progressCircular.visibility = if (isParking) View.VISIBLE else View.GONE
         binding.yesButton.visibility = if (isParking) View.GONE else View.VISIBLE
         binding.noButton.visibility = if (isParking) View.GONE else View.VISIBLE
@@ -234,9 +233,12 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
             )
         ).toString()
         startTime = LocalTime.parse(binding.startTime.text, DateTimeFormatter.ofPattern("h:mm a"))
+        endTime = LocalTime.parse(binding.endTime.text, DateTimeFormatter.ofPattern("h:mm a"))
+        /*
         Log.i("START TIME", startTime.format(DateTimeFormatter.ofPattern("h:mm a")))
         endTime = LocalTime.parse(binding.endTime.text, DateTimeFormatter.ofPattern("h:mm a"))
         Log.i("END TIME", endTime.format(DateTimeFormatter.ofPattern("h:mm a")))
+         */
         binding.startTime.setOnClickListener {
             val cal = Calendar.getInstance()
             val startTimeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
@@ -247,12 +249,10 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
                     binding.startTime.text,
                     DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
                 )
-                Log.i("START TIME", startTime.format(DateTimeFormatter.ofPattern("h:mm a")))
+                //Log.i("START TIME", startTime.format(DateTimeFormatter.ofPattern("h:mm a")))
             }
             TimePickerDialog(
-                this, startTimeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(
-                    Calendar.MINUTE
-                ), false
+                this, startTimeSetListener, startTime.hour, startTime.minute, false
             ).show()
         }
         binding.endTime.setOnClickListener() {
@@ -265,12 +265,10 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
                     binding.endTime.text,
                     DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
                 )
-                Log.i("END TIME", endTime.format(DateTimeFormatter.ofPattern("h:mm a")))
+                //Log.i("END TIME", endTime.format(DateTimeFormatter.ofPattern("h:mm a")))
             }
             TimePickerDialog(
-                this, endTimeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(
-                    Calendar.MINUTE
-                ), false
+                this, endTimeSetListener, endTime.hour, endTime.minute, false
             ).show()
         }
     }
