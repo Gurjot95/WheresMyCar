@@ -18,12 +18,13 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityReminderBinding
 import project.dudewheresmycar.model.ParkingData
-import project.dudewheresmycar.receiver.AlarmReceiver
 import project.dudewheresmycar.service.AlarmService
 import project.dudewheresmycar.util.Constants
 import project.dudewheresmycar.viewmodel.ReminderActivityViewModel
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.Delegates
+
 
 class ReminderActivity : AppCompatActivity() {
     private lateinit var viewModel: ReminderActivityViewModel
@@ -34,10 +35,12 @@ class ReminderActivity : AppCompatActivity() {
     var isParkingSetup: Boolean = false
     var reminderEnabled: Boolean = false
     var alarmTime: Long = 0
+    val calendar = Calendar.getInstance()
 
     private var selectedTime by Delegates.observable(0) { _, oldValue, newValue ->
 
         if (newValue in 1..60) {
+
             sharedPref = getSharedPreferences("views.ParkingActivity", Context.MODE_PRIVATE)
 
             if(sharedPref != null){
@@ -46,26 +49,26 @@ class ReminderActivity : AppCompatActivity() {
                     ParkingData::class.java
                 )
 
-                val calendar = Calendar.getInstance()
+                // get the parking end time from shared prefs
+                val endTimeInMillis = getParkingEndTime(parkingData.endTime)
+                val curTimeInMillis = endTimeInMillis - (Constants.MIN_TO_MILLI * newValue)
 
-                // TODO: parkingTime Convert to millis
-                // val parkingTime = parkingData.endTime
-                // val parkingTime = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 60) // this is 1hr
-                // val curTimeInMillis = parkingTime - (Constants.MIN_TO_MILLI * newValue) // 1hr - selected, NOTE: 1 min = 60000 mills
-
-                val SAMPLEPARKINGTIME = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 1) // this is 1hr
-                val curTimeInMillis = SAMPLEPARKINGTIME - (Constants.MIN_TO_MILLI * 1) // 1hr - selected, NOTE: 1 min = 60000 mills
-
-                /*with(sharedPref.edit()) {
-                    putString("ParkingData", parkingDataString)
-                    apply()
-                }*/
+                // NOTE: DATA FOR TESTING
+                //val endTimeInMillis = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 60) // this is 1hr
+                //val curTimeInMillis = endTimeInMillis - (Constants.MIN_TO_MILLI * newValue) // 1hr - selected, NOTE: 1 min = 60000 mills
 
                 alarmTime = curTimeInMillis
-                alarmService.setExactAlarm(curTimeInMillis)
+                alarmService.setExactAlarm(alarmTime)
 
-                d("test>", "alarmTime is " + convertDate(alarmTime))
+                // save to shared prefs
+                with(sharedPref.edit()) {
+                    putString("alarmTime", alarmTime.toString())
+                    putString("timerOption", newValue.toString())
+                    apply()
+                }
 
+                d("test>", "parking endTime is " + convertToDate(endTimeInMillis))
+                d("test>", "alarmTime is " + convertToDate(alarmTime))
             } else {
                 cancelReminder();
             }
@@ -105,8 +108,7 @@ class ReminderActivity : AppCompatActivity() {
             setState()
         }
 
-        var sn = this.intent.getIntExtra( Constants.EXTRA_SNOOZE, 0)
-        d("test>" , "snooze$sn")
+        var sn = this.intent.getIntExtra(Constants.EXTRA_SNOOZE, 0)
     }
 
     private fun isParkingDataSaved(): Boolean {
@@ -204,7 +206,7 @@ class ReminderActivity : AppCompatActivity() {
                     getString(
                         R.string.timer_selection,
                         selectedTime.toString()
-                    ) + " - " + convertDate(alarmTime)
+                    ) + " - " + convertToDate(alarmTime)
                 )
 
                 timerOptions1.setOnCheckedChangeListener(null)
@@ -218,7 +220,14 @@ class ReminderActivity : AppCompatActivity() {
         selectedTime = 0
     }
 
-    private fun convertDate(timeInMillis: Long): String =
+    private fun convertToDate(timeInMillis: Long): String =
         DateFormat.format("dd/MM/yyyy hh:mm:ss", timeInMillis).toString()
 
+    private fun getParkingEndTime(parkingEndTime:String):Long{
+        val dateToday = DateFormat.format("dd/MM/yyyy", calendar.time).toString()
+        val strDate = "$dateToday $parkingEndTime"
+        val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH)
+        val oldDate = formatter.parse(strDate)
+        return oldDate.time
+    }
 }

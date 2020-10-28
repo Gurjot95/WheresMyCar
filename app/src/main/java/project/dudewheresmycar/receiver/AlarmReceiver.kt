@@ -34,8 +34,9 @@ class AlarmReceiver : BroadcastReceiver() {
                 val snoozeValue = intent.getIntExtra(Constants.EXTRA_SNOOZE, 0)?.let {
                     if(it != null || it != 0) {
                         val calendar = Calendar.getInstance()
-                        timeInMillis = calendar.timeInMillis + (2 * Constants.MIN_TO_MILLI)
-                        //timeInMillis = calendar.timeInMillis + (it * Constants.MIN_TO_MILLI)
+                        // NOTE: DATA FOR TESTING
+                        // timeInMillis = calendar.timeInMillis + (2 * Constants.MIN_TO_MILLI)
+                        timeInMillis = calendar.timeInMillis + (it * Constants.MIN_TO_MILLI)
                         alarmService.setExactAlarm(timeInMillis)
 
                         d("test>", "snooze " + convertDate(timeInMillis))
