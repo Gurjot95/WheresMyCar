@@ -26,4 +26,7 @@
     <string name="enable_reminder">Enable Reminder</string>
     <string name="timer_selection">Reminder has been set for %1$s mins before parking ends</string>
     <string name="timer_disabled">Reminder has been disabled</string>
+    <string name="notif_title">Move your car!</string>
+    <string name="notif_message">Alarm got triggered at %1$s</string>
+    <string name="notif_snooze_15">Snooze 15 minutes</string>
 </resources>

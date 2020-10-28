@@ -1,6 +1,9 @@
 package project.dudewheresmycar.views
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log.d
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -13,38 +16,41 @@ import kotlinx.android.synthetic.main.activity_reminder.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import project.dudewheresmycar.R
 import project.dudewheresmycar.databinding.ActivityReminderBinding
+import project.dudewheresmycar.receiver.AlarmReceiver
 import project.dudewheresmycar.service.AlarmService
+import project.dudewheresmycar.util.Constants
 import project.dudewheresmycar.viewmodel.ReminderActivityViewModel
 import java.util.*
 import kotlin.properties.Delegates
 
-
 class ReminderActivity : AppCompatActivity() {
-    lateinit var viewModel: ReminderActivityViewModel
+    private lateinit var viewModel: ReminderActivityViewModel
     private lateinit var binding: ActivityReminderBinding
-    lateinit var alarmService: AlarmService
-    var reminderEnabled = false
-    val MINUTES_10 = 10
-    val MINUTES_15 = 15
-    val MINUTES_25 = 25
-    val MINUTES_30 = 30
-    val MINUTES_45 = 45
-    val MINUTES_60 = 60
+    private lateinit var alarmService: AlarmService
+    private lateinit var sharedPref: SharedPreferences
+    var isParkingSetup: Boolean = false
+    var reminderEnabled: Boolean = false
+    var alarmTime: Long = 0
 
     private var selectedTime by Delegates.observable(0) { _, oldValue, newValue ->
-        d("test>", "selectedTime $oldValue->$newValue")
 
         if (newValue in 1..60) {
             val calendar = Calendar.getInstance()
-            val curTimeInMillis = calendar.timeInMillis + (60000 * newValue) // 1 min = 60000 mills
+
+            // TODO: Replace with the one from shared pref
+            val SAMPLEPARKINGTIME = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 60) // this is 1hr
+            val curTimeInMillis = SAMPLEPARKINGTIME - (Constants.MIN_TO_MILLI * newValue) // 1hr - selected, NOTE: 1 min = 60000 mills
+            //val SAMPLEPARKINGTIME = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 1) // this is 1hr
+            //val curTimeInMillis = SAMPLEPARKINGTIME - (Constants.MIN_TO_MILLI * 1) // 1hr - selected, NOTE: 1 min = 60000 mills
+            // TODO: Save the value below to shared pref
+            alarmTime = curTimeInMillis
+            d("test>", "alarmTime is " + convertDate(alarmTime))
 
             alarmService.setExactAlarm(curTimeInMillis)
+
         } else if (newValue == 0 && oldValue != 0) {
             createSnackBar(
-                getString(
-                    R.string.timer_disabled,
-                    newValue.toString()
-                )
+                getString(R.string.timer_disabled)
             )
         }
     }
@@ -77,10 +83,19 @@ class ReminderActivity : AppCompatActivity() {
             reminderEnabled = !reminderEnabled
             setState()
         }
+
+        var sn = this.intent.getIntExtra( Constants.EXTRA_SNOOZE, 0)
+        d("test>" , "snooze$sn")
+    }
+
+    private fun isParkingDataSaved(): Boolean {
+        sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return false
+        isParkingSetup = sharedPref.contains("ParkingData")
+        return isParkingSetup
     }
 
     private fun setState() {
-        //TODO Additionally, you can refactor the entire if-else statement below to just 3-4 lines. I want you to think of a way to do this.
+        // TODO Additionally, you can refactor the entire if-else statement below to just 3-4 lines. I want you to think of a way to do this.
         // Hint: Use teneray operators to change values according to condition and use already defined methods to execute same code
         if (reminderEnabled) {
             reminderStatus.text = getString(R.string.disable)
@@ -118,18 +133,16 @@ class ReminderActivity : AppCompatActivity() {
 
     private val listener1: RadioGroup.OnCheckedChangeListener =
         RadioGroup.OnCheckedChangeListener { _, checkedId ->
-            //TODO Julien: Use constant values 10,15 etc as final variables at the top of class.
-            // Also Avoid Checking by ID in favor for views in future as its getting deprecated
             if (checkedId != -1) {
                 when (checkedId) {
                     R.id.tenMinutes -> {
-                        selectedTime = MINUTES_10
+                        selectedTime = Constants.MINUTES_10
                     }
                     R.id.fifteenMinutes -> {
-                        selectedTime = MINUTES_15
+                        selectedTime = Constants.MINUTES_15
                     }
                     R.id.twentyFiveMinutes -> {
-                        selectedTime = MINUTES_25
+                        selectedTime = Constants.MINUTES_25
                     }
                 }
                 createSnackBar(
@@ -157,20 +170,20 @@ class ReminderActivity : AppCompatActivity() {
             if (checkedId != -1) {
                 when (checkedId) {
                     R.id.thirtyMinutes -> {
-                        selectedTime = MINUTES_30
+                        selectedTime = Constants.MINUTES_30
                     }
                     R.id.fortyFiveMinutes -> {
-                        selectedTime = MINUTES_45
+                        selectedTime = Constants.MINUTES_45
                     }
                     R.id.sixtyMinutes -> {
-                        selectedTime = MINUTES_60
+                        selectedTime = Constants.MINUTES_60
                     }
                 }
                 createSnackBar(
                     getString(
                         R.string.timer_selection,
                         selectedTime.toString()
-                    )
+                    ) + " - " + convertDate(alarmTime)
                 )
 
                 timerOptions1.setOnCheckedChangeListener(null)
@@ -182,4 +195,8 @@ class ReminderActivity : AppCompatActivity() {
     private fun cancelReminder() {
         selectedTime = 0
     }
+
+    private fun convertDate(timeInMillis: Long): String =
+        DateFormat.format("dd/MM/yyyy hh:mm:ss", timeInMillis).toString()
+
 }

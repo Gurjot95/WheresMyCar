@@ -5,8 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log.d
-import android.widget.Toast
 import project.dudewheresmycar.receiver.AlarmReceiver
 import project.dudewheresmycar.util.Constants
 import project.dudewheresmycar.util.RandomUtil
