@@ -103,8 +103,13 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
                 apply()
             }
             isParkingSetup = false
-            showHideViews(false)
+            //showHideViews(false)
             setUpMap()
+            Snackbar.make(
+                binding.root, "Your parking has been finished!", Snackbar.LENGTH_SHORT
+            ).show()
+            onBackPressed()
+
         }
 
         binding.refreshButton.setOnClickListener {
@@ -168,7 +173,7 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
 
         var progressBar: CircularTimerView = binding.progressCircular
 
-
+        progressBar.setSuffix(" min");
         progressBar.setCircularTimerListener(
             object : CircularTimerListener {
                 override fun updateDataOnTick(remainingTimeInMs: Long): String? {
