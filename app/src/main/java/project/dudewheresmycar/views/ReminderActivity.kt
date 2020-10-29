@@ -93,6 +93,8 @@ class ReminderActivity : AppCompatActivity() {
     private fun setState() {
         // TODO Additionally, you can refactor the entire if-else statement below to just 3-4 lines. I want you to think of a way to do this.
         // Hint: Use teneray operators to change values according to condition and use already defined methods to execute same code
+        isReminderDisabled = reminderSharedPref.getBoolean("isReminderDisabled", false)
+
         ViewCompat.setBackgroundTintList(
             reminderBtn,
             ColorStateList.valueOf(
@@ -120,7 +122,10 @@ class ReminderActivity : AppCompatActivity() {
             cancelReminder()
         } else { // if enabled
             alarmTime = reminderSharedPref.getLong("alarmTimeInMillis", 0)
-            reminderStatus.text = getString(R.string.enable) + " ( " + convertToDate(alarmTime) + " ) "
+            reminderStatus.text = getString(R.string.enable)
+            if(parkingSharedPref.getString("ParkingData", "") != "")
+                binding.reminderStatus.text = getString(R.string.enable) + " ( " + convertToDate(alarmTime) + " ) "
+
             reminderBtn.text = getString(R.string.disable_reminder)
 
             for (i in 0 until timerOptions1.childCount) {
@@ -154,6 +159,9 @@ class ReminderActivity : AppCompatActivity() {
         alarmService.setExactAlarm(alarmTime)
 
         if(!isReminderDisabled)
+            binding.reminderStatus.text = getString(R.string.enable)
+
+        if(parkingSharedPref.getString("ParkingData", "") != "")
             binding.reminderStatus.text = getString(R.string.enable) + " ( " + convertToDate(alarmTime) + " ) "
 
         // save to shared prefs

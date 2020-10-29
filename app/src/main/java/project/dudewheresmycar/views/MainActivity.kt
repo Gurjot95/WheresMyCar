@@ -36,9 +36,6 @@ class MainActivity : AppCompatActivity() {
                     ParkingActivity::class.java
                 )
             )
-            binding.setupReminderBtn.isEnabled = true
-        } else {
-            binding.setupReminderBtn.isEnabled = false
         }
 
         binding.setupParkingBtn.setOnClickListener {

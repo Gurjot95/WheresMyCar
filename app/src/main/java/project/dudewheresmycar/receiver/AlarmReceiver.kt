@@ -31,7 +31,9 @@ class AlarmReceiver : BroadcastReceiver() {
 
         when (intent.action) {
             Constants.ACTION_SET_EXACT -> {
-                buildNotification(context, "Move your car!", convertDate(timeInMillis))
+                val message = context.getString(R.string.notif_message)
+                // + convertDate(timeInMillis)
+                buildNotification(context, context.getString(R.string.notif_title), message)
             }
             else -> {
                 val snoozeValue = intent.getIntExtra(Constants.EXTRA_SNOOZE, 0)?.let {
@@ -77,7 +79,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
-            .addAction(R.drawable.ic_bell, "Snooze 15 minutes" , pendingIntent)
+            .addAction(R.drawable.ic_bell, context.getString(R.string.notif_snooze_15) , pendingIntent)
 
         with(NotificationManagerCompat.from(context)) {
             notify(1, notificationBuilder.build())
