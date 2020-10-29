@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Build
 import android.text.format.DateFormat
@@ -20,8 +21,10 @@ import java.util.*
 
 class AlarmReceiver : BroadcastReceiver() {
     private lateinit var alarmService: AlarmService
+    private lateinit var reminderSharedPref: SharedPreferences
 
     override fun onReceive(context: Context, intent: Intent) {
+        reminderSharedPref = context.getSharedPreferences("views.ReminderActivity", Context.MODE_PRIVATE)
         var timeInMillis = intent.getLongExtra(Constants.EXTRA_EXACT_ALARM_TIME, 0L)
 
         alarmService = AlarmService(context)
@@ -38,6 +41,15 @@ class AlarmReceiver : BroadcastReceiver() {
                         // timeInMillis = calendar.timeInMillis + (2 * Constants.MIN_TO_MILLI)
                         timeInMillis = calendar.timeInMillis + (it * Constants.MIN_TO_MILLI)
                         alarmService.setExactAlarm(timeInMillis)
+
+                        with(reminderSharedPref.edit()) {
+                            putLong("snoozeTime", timeInMillis)
+                            apply()
+                        }
+
+                        with(NotificationManagerCompat.from(context)) {
+                            cancel(1)
+                        }
 
                         d("test>", "snooze " + convertDate(timeInMillis))
                     }

@@ -120,8 +120,7 @@ class ReminderActivity : AppCompatActivity() {
             cancelReminder()
         } else { // if enabled
             alarmTime = reminderSharedPref.getLong("alarmTimeInMillis", 0)
-            reminderStatus.text = getString(R.string.enable)
-            //+ " (" + convertToDate(alarmTime) + ")"
+            reminderStatus.text = getString(R.string.enable) + " ( " + convertToDate(alarmTime) + " ) "
             reminderBtn.text = getString(R.string.disable_reminder)
 
             for (i in 0 until timerOptions1.childCount) {
@@ -144,6 +143,8 @@ class ReminderActivity : AppCompatActivity() {
         // get the parking end time from shared prefs
         val endTimeInMillis = getParkingEndTime(parkingData.endTime)
         val curTimeInMillis = endTimeInMillis - (Constants.MIN_TO_MILLI * newValue)
+        d("test>", "parking endTime is " + convertToDate(endTimeInMillis))
+        d("test>", "alarmTime is " + convertToDate(curTimeInMillis))
 
         // NOTE: DATA FOR TESTING
         // val endTimeInMillis = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 60) // this is 1hr
@@ -152,15 +153,15 @@ class ReminderActivity : AppCompatActivity() {
         alarmTime = curTimeInMillis
         alarmService.setExactAlarm(alarmTime)
 
+        if(!isReminderDisabled)
+            binding.reminderStatus.text = getString(R.string.enable) + " ( " + convertToDate(alarmTime) + " ) "
+
         // save to shared prefs
         with(reminderSharedPref.edit()) {
             putLong("endTimeInMillis", endTimeInMillis)
             putLong("alarmTimeInMillis", curTimeInMillis)
             apply()
         }
-
-        d("test>", "parking endTime is " + convertToDate(endTimeInMillis))
-        d("test>", "alarmTime is " + convertToDate(curTimeInMillis))
     }
 
     /*
