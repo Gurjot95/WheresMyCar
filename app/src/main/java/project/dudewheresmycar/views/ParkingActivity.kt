@@ -43,6 +43,7 @@ import java.lang.Math.ceil
 import java.sql.Time
 import java.time.temporal.ChronoUnit.MINUTES
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -164,30 +165,47 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
         parkingLatLng = LatLng(parkingData.lat, parkingData.long)
 
         Log.i("DATA", parkingData.toString())
+        
         startTime = LocalTime.parse(parkingData.startTime)
         endTime = LocalTime.parse(parkingData.endTime)
 
+        // To take date into accountability
+        var startDateTime = startTime.atDate(LocalDate.now())
+        var endDateTime = endTime.atDate(LocalDate.now())
+
         showHideViews(true)
 
+        /*
         Log.i(
             "TIMER",
-            ((MINUTES.between(startTime, LocalTime.now()).toFloat() / MINUTES.between(
-                startTime,
-                endTime
+            ((MINUTES.between(startTime.atDate(LocalDate.now()), LocalTime.now().atDate(LocalDate.now())).toFloat() / MINUTES.between(
+                startTime.atDate(LocalDate.now()),
+                endTime.atDate(LocalDate.now().plusDays(1))
             ).toFloat()) * 100).toString()
         )
+        */
 
         var progressBar: CircularTimerView = binding.progressCircular
 
         progressBar.setSuffix(" min");
+        if (startTime > endTime) {
+            if (startTime > LocalTime.now()) {
+                startDateTime = startTime.atDate(LocalDate.now().minusDays(1))
+                endDateTime = endTime.atDate(LocalDate.now())
+            }
+            else {
+                startDateTime = startTime.atDate(LocalDate.now())
+                endDateTime = endTime.atDate(LocalDate.now().plusDays(1))
+            }
+        }
         progressBar.setCircularTimerListener(
             object : CircularTimerListener {
                 override fun updateDataOnTick(remainingTimeInMs: Long): String? {
                     progressBar.setText("Time Left\n")
                     progressBar.progress =
-                        (MINUTES.between(startTime, LocalTime.now()).toFloat() / MINUTES.between(
-                            startTime,
-                            endTime
+                        (MINUTES.between(startDateTime, LocalDateTime.now()).toFloat() / MINUTES.between(
+                            startDateTime,
+                            endDateTime
                         ).toFloat()) * 100
                     return (((remainingTimeInMs / 1000) / 60) + 1).toString()
                 }
@@ -199,9 +217,9 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
                     Toast.makeText(this@ParkingActivity, "FINISHED", Toast.LENGTH_SHORT).show()
                 }
             },
-            MINUTES.between(LocalTime.now(), endTime),
+            MINUTES.between(LocalDateTime.now(), endDateTime),
             TimeFormatEnum.MINUTES,
-            MINUTES.between(startTime, endTime)
+            MINUTES.between(startDateTime, endDateTime)
         )
         progressBar.startTimer()
     }
