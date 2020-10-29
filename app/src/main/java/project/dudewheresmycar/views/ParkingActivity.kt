@@ -102,6 +102,12 @@ class ParkingActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMar
             with(sharedPref.edit().clear()) {
                 apply()
             }
+
+            var reminderSharedPref = getSharedPreferences("views.ReminderActivity", Context.MODE_PRIVATE)
+            with(reminderSharedPref.edit().clear()) {
+                apply()
+            }
+
             isParkingSetup = false
             //showHideViews(false)
             setUpMap()

@@ -36,6 +36,9 @@ class MainActivity : AppCompatActivity() {
                     ParkingActivity::class.java
                 )
             )
+            binding.setupReminderBtn.isEnabled = true
+        } else {
+            binding.setupReminderBtn.isEnabled = false
         }
 
         binding.setupParkingBtn.setOnClickListener {
@@ -50,11 +53,6 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         }
-
-        sharedPref = getSharedPreferences("views.ParkingActivity", Context.MODE_PRIVATE)
-
-        if (sharedPref == null)
-            binding.setupReminderBtn.setEnabled(false)
     }
 
 }

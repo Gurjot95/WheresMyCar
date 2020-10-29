@@ -32,43 +32,20 @@ class ReminderActivity : AppCompatActivity() {
     private lateinit var viewModel: ReminderActivityViewModel
     private lateinit var binding: ActivityReminderBinding
     private lateinit var alarmService: AlarmService
-    private lateinit var sharedPref: SharedPreferences
+    private lateinit var parkingSharedPref: SharedPreferences
+    private lateinit var reminderSharedPref: SharedPreferences
     lateinit var parkingData: ParkingData
-    private var isParkingSetup: Boolean = false
     private var isReminderDisabled: Boolean = false
     private var alarmTime: Long = 0
-    val calendar = Calendar.getInstance()
+    private val calendar = Calendar.getInstance()
 
     private var selectedTime by Delegates.observable(0) { _, oldValue, newValue ->
-
         if (newValue in 1..60) {
-            if(!sharedPref.contains("ParkingData")) return@observable
-            parkingData = Gson().fromJson(
-                sharedPref.getString("ParkingData", ""),
-                ParkingData::class.java
-            )
 
+            if(!parkingSharedPref.contains("ParkingData")) return@observable
 
-            // get the parking end time from shared prefs
-            val endTimeInMillis = getParkingEndTime(parkingData.endTime)
-            val curTimeInMillis = endTimeInMillis - (Constants.MIN_TO_MILLI * newValue)
+            setAlarm(newValue)
 
-            // NOTE: DATA FOR TESTING
-            //val endTimeInMillis = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 60) // this is 1hr
-            //val curTimeInMillis = endTimeInMillis - (Constants.MIN_TO_MILLI * newValue) // 1hr - selected, NOTE: 1 min = 60000 mills
-
-            alarmTime = curTimeInMillis
-            alarmService.setExactAlarm(alarmTime)
-
-            // save to shared prefs
-            with(sharedPref.edit()) {
-                putString("alarmTime", alarmTime.toString())
-                putInt("reminderTime", newValue)
-                apply()
-            }
-
-            d("test>", "parking endTime is " + convertToDate(endTimeInMillis))
-            d("test>", "alarmTime is " + convertToDate(alarmTime))
         } else if (newValue == 0 && oldValue != 0) {
             createSnackBar(
                 getString(R.string.timer_disabled)
@@ -81,9 +58,11 @@ class ReminderActivity : AppCompatActivity() {
         setContentView(R.layout.activity_reminder)
         viewModel = ViewModelProviders.of(this).get(ReminderActivityViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_reminder)
-        sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        alarmService = AlarmService(this)
+        parkingSharedPref = getSharedPreferences("views.ParkingActivity", Context.MODE_PRIVATE)
+        reminderSharedPref = getSharedPreferences("views.ReminderActivity", Context.MODE_PRIVATE)
+        isReminderDisabled = parkingSharedPref.getBoolean("isReminderDisabled", false)
 
-        isReminderDisabled = sharedPref.getBoolean("isReminderDisabled", false)
         //You can use below code for future and avoid creating multiple drawables to change color
         //var shape = ContextCompat.getDrawable(this,R.drawable.semi_circle) as LayerDrawable
         //shape.getDrawable(R.id.semiCircleColor).colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this,R.color.orange), PorterDuff.Mode.SRC_ATOP)
@@ -96,15 +75,12 @@ class ReminderActivity : AppCompatActivity() {
         binding.homeToolbar.toolbarTitle.text = resources.getString(R.string.reminder_title)
         binding.homeToolbar.toolbarDesc.text = resources.getString(R.string.reminder_info)
 
-        alarmService = AlarmService(this)
         setUpRadioGroup()
         setState()
 
-
-
         reminderBtn.setOnClickListener {
             isReminderDisabled = !isReminderDisabled
-            with(sharedPref.edit()) {
+            with(reminderSharedPref.edit()) {
                 putBoolean("isReminderDisabled", isReminderDisabled)
                 apply()
             }
@@ -112,13 +88,6 @@ class ReminderActivity : AppCompatActivity() {
             setState()
         }
 
-        var sn = this.intent.getIntExtra(Constants.EXTRA_SNOOZE, 0)
-    }
-
-    private fun isParkingDataSaved(): Boolean {
-        //sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return false
-        isParkingSetup = sharedPref.contains("ParkingData")
-        return isParkingSetup
     }
 
     private fun setState() {
@@ -150,7 +119,9 @@ class ReminderActivity : AppCompatActivity() {
 
             cancelReminder()
         } else { // if enabled
+            alarmTime = reminderSharedPref.getLong("alarmTimeInMillis", 0)
             reminderStatus.text = getString(R.string.enable)
+            //+ " (" + convertToDate(alarmTime) + ")"
             reminderBtn.text = getString(R.string.disable_reminder)
 
             for (i in 0 until timerOptions1.childCount) {
@@ -158,10 +129,38 @@ class ReminderActivity : AppCompatActivity() {
                 val  secondGroupBtn = (timerOptions2.getChildAt(i) as RadioButton)
                 (timerOptions1.getChildAt(i) as RadioButton).isEnabled = true
                 (timerOptions2.getChildAt(i) as RadioButton).isEnabled = true
-                firstGroupBtn.isChecked = firstGroupBtn.tag.equals(sharedPref.getString("selectedReminderTag","-1"))
-                secondGroupBtn.isChecked = secondGroupBtn.tag.equals(sharedPref.getString("selectedReminderTag","-1"))
+                firstGroupBtn.isChecked = firstGroupBtn.tag.equals(reminderSharedPref.getString("selectedReminderTag","-1"))
+                secondGroupBtn.isChecked = secondGroupBtn.tag.equals(reminderSharedPref.getString("selectedReminderTag","-1"))
             }
         }
+    }
+
+    private fun setAlarm(newValue:Int) {
+        parkingData = Gson().fromJson(
+            parkingSharedPref.getString("ParkingData", ""),
+            ParkingData::class.java
+        )
+
+        // get the parking end time from shared prefs
+        val endTimeInMillis = getParkingEndTime(parkingData.endTime)
+        val curTimeInMillis = endTimeInMillis - (Constants.MIN_TO_MILLI * newValue)
+
+        // NOTE: DATA FOR TESTING
+        // val endTimeInMillis = calendar.timeInMillis + (Constants.MIN_TO_MILLI * 60) // this is 1hr
+        // val curTimeInMillis = endTimeInMillis - (Constants.MIN_TO_MILLI * 2) // 1hr - selected, NOTE: 1 min = 60000 mills
+
+        alarmTime = curTimeInMillis
+        alarmService.setExactAlarm(alarmTime)
+
+        // save to shared prefs
+        with(reminderSharedPref.edit()) {
+            putLong("endTimeInMillis", endTimeInMillis)
+            putLong("alarmTimeInMillis", curTimeInMillis)
+            apply()
+        }
+
+        d("test>", "parking endTime is " + convertToDate(endTimeInMillis))
+        d("test>", "alarmTime is " + convertToDate(curTimeInMillis))
     }
 
     /*
@@ -191,7 +190,7 @@ class ReminderActivity : AppCompatActivity() {
                     }
                 }
 
-                with(sharedPref.edit()) {
+                with(reminderSharedPref.edit()) {
                     putString("selectedReminderTag", selectedTime.toString())
                     apply()
                 }
@@ -199,7 +198,7 @@ class ReminderActivity : AppCompatActivity() {
                     getString(
                         R.string.timer_selection,
                         selectedTime.toString()
-                    ) + " - " + convertToDate(alarmTime)
+                    )
                 )
                 timerOptions2.setOnCheckedChangeListener(null)
                 timerOptions2.clearCheck()
@@ -228,7 +227,7 @@ class ReminderActivity : AppCompatActivity() {
                         selectedTime = Constants.MINUTES_60
                     }
                 }
-                with(sharedPref.edit()) {
+                with(reminderSharedPref.edit()) {
                     putString("selectedReminderTag", selectedTime.toString())
                     apply()
                 }
@@ -260,4 +259,5 @@ class ReminderActivity : AppCompatActivity() {
         val oldDate = formatter.parse(strDate)
         return oldDate.time
     }
+
 }
